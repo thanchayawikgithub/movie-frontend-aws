@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useMovieStore } from '@/stores/movie'
 import { mdiTagOutline, mdiClockTimeThreeOutline } from '@mdi/js'
+import router from '@/router'
 const movieStore = useMovieStore()
 </script>
 <template>
@@ -14,7 +15,7 @@ const movieStore = useMovieStore()
           rounded="lg"
           v-bind="props"
           :elevation="isHovering ? 10 : 5"
-          @click="console.log('click')"
+          @click="router.push({ name: 'movie', params: { id: movie.id } })"
         >
           <v-img :src="movie.poster" cover>
             <v-sheet
