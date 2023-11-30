@@ -5,7 +5,7 @@ const authStore = useAuthStore()
 </script>
 <template>
   <v-dialog v-model="authStore.showSignupDialog"
-    ><v-card :width="480" :height="670" class="mx-auto" rounded="lg"
+    ><v-card :width="480" :height="670" class="mx-auto" rounded="lg" style="font-family: kanit"
       ><v-btn
         style="position: absolute; right: 0"
         class="mr-2 mt-1 close-btn"
@@ -25,7 +25,7 @@ const authStore = useAuthStore()
                 font-size: 40px;
                 font-weight: bold;
                 font-family: 'Times New Roman', Times, serif;
-                color: #b91c1c;
+                color: #dc2626;
               "
               class="mb-5"
             >

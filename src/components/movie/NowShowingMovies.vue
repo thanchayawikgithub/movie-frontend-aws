@@ -10,14 +10,19 @@ const movieStore = useMovieStore()
       <v-hover v-slot="{ isHovering, props }">
         <v-card
           class="ma-5"
-          :height="380"
-          :width="300"
-          rounded="lg"
+          :height="390"
+          :width="310"
           v-bind="props"
           :elevation="isHovering ? 10 : 5"
+          style="border-radius: 1rem"
           @click="router.push({ name: 'movie', params: { id: movie.id } })"
         >
-          <v-img :src="movie.poster" cover>
+          <v-img
+            :src="movie.poster"
+            :height="380"
+            :width="300"
+            style="margin-left: 5px; margin-top: 5px; border-radius: 1rem"
+          >
             <v-sheet
               v-if="isHovering"
               style="background-color: rgba(0, 0, 0, 0.8); color: white; height: 100%"

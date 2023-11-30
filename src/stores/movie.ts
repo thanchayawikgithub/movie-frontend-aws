@@ -13,7 +13,7 @@ export const useMovieStore = defineStore('movie', () => {
       length: '3 ชม. 12 นาที',
       rating: '13+',
       poster:
-        'https://lumiere-a.akamaihd.net/v1/images/avatar-wayofwater-th_b0dea4e1.jpeg?region=0%2C0%2C600%2C900'
+        'https://cdn.discordapp.com/attachments/874174814598856806/1179433664610840646/4k.png?ex=6579c432&is=65674f32&hm=3acb78c2fac8e20ec103e7bcb337de9d3e95c4ddb1aed92e711a40b83b04f1c4&'
     },
     {
       id: 1,
@@ -68,7 +68,7 @@ export const useMovieStore = defineStore('movie', () => {
       length: '3h 12m',
       rating: '13+',
       poster:
-        'https://lumiere-a.akamaihd.net/v1/images/avatar-wayofwater-th_b0dea4e1.jpeg?region=0%2C0%2C600%2C900'
+        'https://cdn.discordapp.com/attachments/874174814598856806/1179435376654422026/59731ae3832c4ac2.png?ex=6579c5ca&is=656750ca&hm=f20914ca0a9ba452dc340b398bae6fbcbb594e46855f4da2f6ed9ddad2be2844&'
     },
     {
       id: 1,
@@ -79,7 +79,7 @@ export const useMovieStore = defineStore('movie', () => {
       length: '3h 12m',
       rating: '13+',
       poster:
-        'https://lumiere-a.akamaihd.net/v1/images/avatar-wayofwater-th_b0dea4e1.jpeg?region=0%2C0%2C600%2C900'
+        'https://cdn.discordapp.com/attachments/874174814598856806/1179435376654422026/59731ae3832c4ac2.png?ex=6579c5ca&is=656750ca&hm=f20914ca0a9ba452dc340b398bae6fbcbb594e46855f4da2f6ed9ddad2be2844&'
     },
     {
       id: 1,
@@ -90,7 +90,7 @@ export const useMovieStore = defineStore('movie', () => {
       length: '3h 12m',
       rating: '13+',
       poster:
-        'https://lumiere-a.akamaihd.net/v1/images/avatar-wayofwater-th_b0dea4e1.jpeg?region=0%2C0%2C600%2C900'
+        'https://cdn.discordapp.com/attachments/874174814598856806/1179435376654422026/59731ae3832c4ac2.png?ex=6579c5ca&is=656750ca&hm=f20914ca0a9ba452dc340b398bae6fbcbb594e46855f4da2f6ed9ddad2be2844&'
     },
     {
       id: 1,
@@ -101,7 +101,7 @@ export const useMovieStore = defineStore('movie', () => {
       length: '3h 12m',
       rating: '13+',
       poster:
-        'https://lumiere-a.akamaihd.net/v1/images/avatar-wayofwater-th_b0dea4e1.jpeg?region=0%2C0%2C600%2C900'
+        'https://cdn.discordapp.com/attachments/874174814598856806/1179435376654422026/59731ae3832c4ac2.png?ex=6579c5ca&is=656750ca&hm=f20914ca0a9ba452dc340b398bae6fbcbb594e46855f4da2f6ed9ddad2be2844&'
     },
     {
       id: 1,
@@ -112,7 +112,7 @@ export const useMovieStore = defineStore('movie', () => {
       length: '3h 12m',
       rating: '13+',
       poster:
-        'https://lumiere-a.akamaihd.net/v1/images/avatar-wayofwater-th_b0dea4e1.jpeg?region=0%2C0%2C600%2C900'
+        'https://cdn.discordapp.com/attachments/874174814598856806/1179435376654422026/59731ae3832c4ac2.png?ex=6579c5ca&is=656750ca&hm=f20914ca0a9ba452dc340b398bae6fbcbb594e46855f4da2f6ed9ddad2be2844&'
     },
     {
       id: 1,
@@ -123,7 +123,7 @@ export const useMovieStore = defineStore('movie', () => {
       length: '3h 12m',
       rating: '13+',
       poster:
-        'https://lumiere-a.akamaihd.net/v1/images/avatar-wayofwater-th_b0dea4e1.jpeg?region=0%2C0%2C600%2C900'
+        'https://cdn.discordapp.com/attachments/874174814598856806/1179435376654422026/59731ae3832c4ac2.png?ex=6579c5ca&is=656750ca&hm=f20914ca0a9ba452dc340b398bae6fbcbb594e46855f4da2f6ed9ddad2be2844&'
     }
   ])
 
