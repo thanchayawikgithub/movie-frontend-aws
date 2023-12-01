@@ -5,7 +5,7 @@ const movieRoutes = [
     component: () => import('../views/movie/MoviesView.vue')
   },
   {
-    path: '/movies/:id',
+    path: '/movie/:id',
     name: 'movie',
     component: () => import('../views/movie/MovieView.vue')
   }

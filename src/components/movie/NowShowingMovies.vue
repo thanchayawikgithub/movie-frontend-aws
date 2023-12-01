@@ -37,6 +37,9 @@ const movieStore = useMovieStore()
                 <v-icon>{{ mdiClockTimeThreeOutline }}</v-icon>
                 <p style="font-size: 18px" class="ml-3">{{ movie.length }}</p>
               </div>
+              <p style="text-align: center; font-size: 18px; margin-top: 12rem">
+                คลิกเพื่อดูเพิ่มเติม
+              </p>
             </v-sheet>
           </v-img>
         </v-card>
