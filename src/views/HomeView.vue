@@ -9,36 +9,31 @@ const movieStore = useMovieStore()
   <v-container fluid
     ><v-row
       ><v-col cols="4"></v-col
-      ><v-col cols="4" class="d-flex px-16 mt-7">
-        <v-select
-          class="mr-5"
-          label="เลือกภาพยนตร์"
-          :items="movieStore.nowShowingMovie"
-          variant="outlined"
-          hide-details
-          density="comfortable"
-          ><template v-slot:item="{ item, props }">
-            <v-list
-              ><v-list-item :title="item.raw.title" v-bind="props" :width="220"
-                ><v-img
-                  :src="item.raw.poster"
-                  :width="200"
-                  :height="250"
-                ></v-img></v-list-item></v-list
-          ></template>
-        </v-select>
-
-        <v-btn
-          :width="120"
-          style="
-            height: 100%;
-            background: linear-gradient(to right, #b91c1c, #ff6640);
-            color: white;
-            font-weight: bold;
-            font-size: 16px;
-          "
-          >รอบฉาย</v-btn
-        ></v-col
+      ><v-col cols="4" align="center">
+        <v-btn variant="outlined" :width="250" :height="50" class="mt-5" style="font-weight: bold"
+          >เลือกภาพยนตร์<v-overlay
+            activator="parent"
+            location="bottom center"
+            location-strategy="connected"
+            origin="auto"
+          >
+            <v-card class="pa-2" :width="1000" :height="715">
+              <v-container fluid style="overflow-y: scroll; height: 100%"
+                ><v-row
+                  ><v-col v-for="movie in movieStore.nowShowingMovie" :key="movie.id" cols="3"
+                    ><v-card hover
+                      ><v-card-title
+                        style="
+                          font-size: 14px;
+                          background-color: #b91c1c;
+                          color: white;
+                          font-weight: bold;
+                        "
+                        >{{ movie.title }}</v-card-title
+                      ><v-img
+                        :src="movie.poster"
+                      ></v-img></v-card></v-col></v-row></v-container></v-card></v-overlay
+        ></v-btn> </v-col
       ><v-col cols="4"></v-col
     ></v-row>
     <p style="font-size: 42px; padding-left: 75px" class="my-5">ภาพยนต์แนะนำ</p>
@@ -47,3 +42,4 @@ const movieStore = useMovieStore()
     <NowShowingMovies
   /></v-container>
 </template>
+<style></style>
