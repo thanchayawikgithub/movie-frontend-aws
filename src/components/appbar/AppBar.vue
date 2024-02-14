@@ -5,7 +5,7 @@ import router from '@/router'
 const authStore = useAuthStore()
 </script>
 <template>
-  <v-app-bar style="font-family: 'Times New Roman', Times, serif" density="default" :elevation="5"
+  <v-app-bar style="font-family: 'Times New Roman', Times, serif" density="default" :elevation="2"
     ><v-row
       ><v-col cols="4"></v-col
       ><v-col cols="4" align="center">

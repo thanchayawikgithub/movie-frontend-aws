@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import NowShowingMovies from '@/components/movie/NowShowingMovies.vue'
+import NowShowingMovies from '@/components/movie/NowShowingMovies2.vue'
 import RecommendMovies from '@/components/movie/RecommendMovies.vue'
 import { useMovieStore } from '@/stores/movie'
 const movieStore = useMovieStore()
@@ -36,10 +36,8 @@ const movieStore = useMovieStore()
         ></v-btn> </v-col
       ><v-col cols="4"></v-col
     ></v-row>
-    <p style="font-size: 42px; padding-left: 75px" class="my-5">ภาพยนต์แนะนำ</p>
-    <RecommendMovies />
-    <p style="font-size: 42px; padding-left: 75px" class="my-5">กำลังฉาย</p>
-    <NowShowingMovies
-  /></v-container>
+    <p style="font-size: 35px; text-align: center" class="mt-10">กำลังฉาย</p>
+    <NowShowingMovies />
+  </v-container>
 </template>
 <style></style>
