@@ -8,6 +8,11 @@ const movieRoutes = [
     path: '/booking/:movieId',
     name: 'booking',
     component: () => import('../views/BookingView.vue')
+  },
+  {
+    path: '/bookingSeat/:movieId',
+    name: 'bookingSeat',
+    component: () => import('../views/BookingSeatView.vue')
   }
 ]
 
