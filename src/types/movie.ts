@@ -1,9 +1,27 @@
+import type Showtime from './showtime'
+
 export default interface Movie {
-  id: number
-  title: string
-  description: string
-  tag: string[]
-  rating: string
-  length: string
-  poster: string
+  movieId: number
+
+  movieName: string
+
+  movieDesc: string
+
+  movieLength: number
+
+  movieImage: string
+
+  movieTrailer: string
+
+  creatDate: Date
+
+  deleteDate: Date
+
+  updateDate: Date
+
+  showtimes: Showtime[]
+
+  // categories: MovieCategory[];
+
+  // reviews: Review[];
 }

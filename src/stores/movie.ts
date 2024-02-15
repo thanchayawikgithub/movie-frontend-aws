@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import type Movie from '@/types/movie'
 
 export const useMovieStore = defineStore('movie', () => {
-  const nowShowingMovie = ref<Movie[]>([
+  const nowShowingMovie = ref([
     {
       id: 1,
       title: 'อวตาร วิถีแห่งสายน้ำ',
