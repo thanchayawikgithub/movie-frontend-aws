@@ -1,30 +1,28 @@
-import type Movie from "./movie";
+import type Movie from './movie'
+import type ShowtimeSeat from './showtime_seat'
+import type Theater from './theater'
 
 export default interface Showtime {
-  showId: number;
+  showId: number
 
-  showStart: Date;
+  showStart: Date
 
-  showDate: Date;
+  showDate: Date
 
-  showEnd: Date;
+  showEnd: Date
 
-  creatDate: Date;
+  creatDate: Date
 
-  deleteDate: Date;
+  deleteDate: Date
 
-  updateDate: Date;
+  updateDate: Date
 
-
-  movie: Movie;
+  movie: Movie
 
   // @OneToMany(() => Ticket, (ticket) => ticket.showtime)
   // tickets: Ticket[];
 
-  // @ManyToOne(() => Theater, (theater) => theater.showtimes)
-  // @JoinColumn({ name: 'theaterId' })
-  // theater: Theater;
+  theater: Theater
 
-  // @OneToMany(() => ShowtimeSeat, (showtimeseats) => showtimeseats.showtime)
-  // showtimeseats: ShowtimeSeat[];
+  showtimeseats: ShowtimeSeat[]
 }

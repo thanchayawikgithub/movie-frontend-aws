@@ -1,3 +1,4 @@
+import type MovieCategory from './movie_category'
 import type Showtime from './showtime'
 
 export default interface Movie {
@@ -21,7 +22,7 @@ export default interface Movie {
 
   showtimes: Showtime[]
 
-  // categories: MovieCategory[];
+  categories: MovieCategory[]
 
-  // reviews: Review[];
+  // reviews: Review[]
 }

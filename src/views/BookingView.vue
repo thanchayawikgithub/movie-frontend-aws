@@ -24,6 +24,7 @@ const deluxes = ['L', 'K', 'J', 'I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A', 'AA
 const seats = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
 onMounted(async () => {
   movie.value = await movieStore.getMovie(movieId)
+  console.log(movie.value)
 })
 
 watch(step, async () => {
@@ -65,20 +66,21 @@ const days = [
             class="mx-auto mt-0 pa-3"
             style="position: relative; z-index: 1"
           > -->
-          <v-img :src="movie?.poster"></v-img>
+          <!-- <v-img :src="`http://localhost:3000/movies/image/${movie!.movieImage}`"></v-img> -->
         </v-col>
         <v-col cols="9" class="d-flex flex-column">
-          <h2 class="mb-5">{{ movie?.title }}</h2>
-          <p>หมวดหมู่ : {{ movie?.tag.join() }}</p>
+          <h2 class="mb-5">{{ movie?.movieName }}</h2>
+          <p>หมวดหมู่ : {{ movie?.categories.join() }}</p>
           <p class="mt-3">
             <v-icon class="mr-1">{{ mdiClockOutline }}</v-icon
-            >{{ movie?.length }}
+            >{{ movie?.movieLength }} นาที
           </p>
           <v-btn
             rounded="xl"
             :width="250"
             :height="40"
             class="mt-5"
+            @click="router.push({ name: 'movieDetail' })"
             style="background: #b91c1c; color: white; font-weight: bold"
             >รายละเอียดภาพยนตร์</v-btn
           >
@@ -140,11 +142,17 @@ const days = [
 
                   <v-divider></v-divider>
                 </v-row>
-                <v-row v-for="n in 5" style="height: 15vh" :key="n">
+                <v-row
+                  v-for="showtime in movie?.showtimes"
+                  style="height: 15vh"
+                  :key="showtime.showId"
+                >
                   <v-col
                     ><v-row
                       ><v-col cols="2"
-                        ><p class="text-center mt-5" style="font-size: 18px">โรงภาพยนตร์ 3</p>
+                        ><p class="text-center mt-5" style="font-size: 18px">
+                          {{ showtime.showId }}
+                        </p>
                       </v-col>
                       <v-divider vertical style="height: 15vh"></v-divider
                       ><v-col class="mt-0"
