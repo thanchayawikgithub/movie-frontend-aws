@@ -1,8 +1,21 @@
 <script setup lang="ts">
 import MovieList from '@/components/movie/MovieList.vue'
+import router from '@/router'
 
 import { useMovieStore } from '@/stores/movie'
+import type Movie from '@/types/movie'
+import { onMounted, ref } from 'vue'
+
 const movieStore = useMovieStore()
+const movies = ref<Movie[]>([])
+const toBookingPage = async (movieId: number) => {
+  router.push({ name: 'booking', params: { movieId: movieId } })
+}
+onMounted(async () => {
+  ///ข้อมูล
+  movies.value = await movieStore.getMovies()
+  console.log(movies.value)
+})
 </script>
 
 <template>
@@ -20,7 +33,7 @@ const movieStore = useMovieStore()
             <v-card class="pa-2" :width="1000" :height="715">
               <v-container fluid style="overflow-y: scroll; height: 100%"
                 ><v-row>
-                  <!-- <v-col v-for="movie in movieStore.nowShowingMovie" :key="movie.id" cols="3"
+                  <v-col v-for="movie in movies" :key="movie.movieId" cols="3"
                     ><v-card hover
                       ><v-card-title
                         style="
@@ -29,15 +42,13 @@ const movieStore = useMovieStore()
                           color: white;
                           font-weight: bold;
                         "
-                        >{{ movie.title }}</v-card-title
+                        >{{ movie.movieName }}</v-card-title
                       ><v-img
-                        :src="movie.poster"
-                      ></v-img></v-card></v-col> -->
-                </v-row></v-container
-              ></v-card
-            ></v-overlay
-          ></v-btn
-        > </v-col
+                        :src="`http://localhost:3000/movies/${movie?.movieId}/image`"
+                        @click="toBookingPage(movie.movieId)"
+                      ></v-img> </v-card
+                  ></v-col> </v-row></v-container></v-card></v-overlay
+        ></v-btn> </v-col
       ><v-col cols="4"></v-col
     ></v-row>
     <p style="font-size: 35px; text-align: center" class="mt-10">กำลังฉาย</p>
