@@ -14,29 +14,30 @@ onMounted(async () => {
 })
 </script>
 <template>
-  <v-container fluid style="background-color: white">
+  <v-container fluid style="background: white; color: white; font-weight: bold">
     <v-row>
       <v-col cols="2" class="justify-center">
-        <!-- <v-card
-            :width="280"
-            :height="350"
-            class="mx-auto mt-0 pa-3"
-            style="position: relative; z-index: 1"
-          > -->
-        <v-img
-          class="ml-5"
-          style="border-radius: 1rem"
-          :width="280"
+        <v-card
+          class="ml-5 mt-1"
+          style="border-radius: 1rem; background: #b91c1c"
+          :width="275"
           :height="400"
-          :src="`http://localhost:3000/movies/${movieId}/image`"
-        ></v-img>
+        >
+          <v-img
+            class="mt-2 ml-2"
+            style="border-radius: 1rem"
+            :width="260"
+            :height="385"
+            :src="`http://localhost:3000/movies/${movieId}/image`"
+          ></v-img>
+        </v-card>
       </v-col>
       <v-col cols="3" class="d-flex flex-column ml-8 mt-2">
-        <h1 class="mb-5" style="color: black">{{ movie?.movieName }}</h1>
-        <p style="color: black">
+        <h1 class="mb-5 mt-5 ml-7" style="color: black">{{ movie?.movieName }}</h1>
+        <p style="color: black; font-weight: 200" class="ml-7">
           หมวดหมู่ : {{ movie?.categories.map((category) => category.movieCatName).join('/') }}
         </p>
-        <p class="mt-3" style="color: black">
+        <p class="mt-3 ml-7" style="color: black; font-weight: 200">
           <v-icon class="mr-1">{{ mdiClockOutline }}</v-icon
           >{{ movie?.movieLength }} นาที
         </p>
@@ -44,9 +45,13 @@ onMounted(async () => {
           rounded="xl"
           :width="250"
           :height="40"
-          class="mt-5"
+          class="mt-5 ml-7"
           @click="router.push({ name: 'booking' })"
-          style="background: #b91c1c; color: white; font-weight: bold"
+          style="
+            background: linear-gradient(to right, #b91c1c, #ff6640);
+            color: white;
+            font-weight: bold;
+          "
           >รอบฉายทั้งหมด</v-btn
         >
       </v-col>
@@ -62,18 +67,40 @@ onMounted(async () => {
         ></iframe>
       </v-col>
     </v-row>
-    <v-divider style="border: 1px solid black" class="mt-3 mb-3"></v-divider>
+    <v-divider style="border: 1px solid black" class="mt-3 mb-3 border-opacity-20"></v-divider>
+
     <v-row>
       <v-col cols="7">
-        <h2 class="mb-1" style="color: black">เรื่องย่อ</h2>
-        <p class="mt-1" style="color: black">{{ movie?.movieDesc }}</p></v-col
+        <h2 class="mb-1 ml-5" style="color: black">เรื่องย่อ</h2>
+        <p class="mt-1 ml-5" style="color: black; font-weight: 200">
+          {{ movie?.movieDesc }}
+        </p></v-col
       >
     </v-row>
-    <v-divider style="border: 1px solid black" class="mt-3 mb-3"></v-divider>
+    <v-divider style="border: 1px solid black" class="mt-3 mb-3 border-opacity-20"></v-divider>
     <v-row>
       <v-col cols="7">
-        <h2 class="mb-1" style="color: black">รีวิวภาพยนตร์</h2>
+        <h2 class="mb-1 ml-5" style="color: black">รีวิวภาพยนตร์</h2>
+        <p class="mb-1 ml-5" style="color: black; font-weight: 200">ยังไม่มีความคิดเห็น</p>
       </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col cols="12" align="center"
+        ><v-btn
+          rounded="xl"
+          :width="250"
+          :height="40"
+          class="mt-5"
+          @click="router.push({ name: 'booking' })"
+          style="
+            background: linear-gradient(to right, #b91c1c, #ff6640);
+            color: white;
+            font-weight: bold;
+          "
+          >รีวิว</v-btn
+        ></v-col
+      >
     </v-row>
   </v-container>
 </template>

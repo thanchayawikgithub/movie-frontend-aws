@@ -10,7 +10,8 @@ import {
   mdiMapMarker,
   mdiVolumeHigh,
   mdiSofaSingle,
-  mdiSofa
+  mdiSofa,
+  mdiCloseCircleOutline
 } from '@mdi/js'
 import { watch } from 'vue'
 import { onMounted, ref } from 'vue'
@@ -52,7 +53,8 @@ watch(step, async () => {
     console.log(showtime.value)
   }
 })
-const model = ref<null>()
+const model = ref(0)
+
 const days = [
   'อาทิตย์',
   'จันทร์',
@@ -112,37 +114,28 @@ const days = [
 
       <v-stepper-window
         ><v-stepper-window-item :value="1">
-          <v-sheet class="mx-auto" elevation="8">
+          <v-card>
             <v-slide-group
               v-model="model"
               selected-class="bg-primary"
               show-arrows
               mandatory
-              class="mt-5 mx-auto"
+              class="mx-auto"
               :width="1500"
             >
               <v-slide-group-item
                 v-for="(day, index) in days"
                 :key="index"
-                v-slot="{ isSelected, toggle, selectedClass }"
+                v-slot="{ toggle, selectedClass }"
               >
                 <v-card
-                  color="grey-lighten-1"
-                  :class="['ma-5', selectedClass]"
-                  height="100"
+                  variant="flat"
+                  style="text-align: center"
+                  :class="['ma-5   ', selectedClass]"
+                  height="30"
                   width="150"
                   @click="toggle"
                   >{{ day }}
-                  <div class="d-flex fill-height align-center justify-center">
-                    <v-scale-transition>
-                      <v-icon
-                        v-if="isSelected"
-                        color="white"
-                        size="48"
-                        icon="mdi-close-circle-outline"
-                      ></v-icon>
-                    </v-scale-transition>
-                  </div>
                 </v-card>
               </v-slide-group-item>
             </v-slide-group>
@@ -188,7 +181,7 @@ const days = [
                 ></v-row>
               </v-sheet>
             </v-expand-transition>
-          </v-sheet>
+          </v-card>
         </v-stepper-window-item>
         <v-stepper-window-item :value="2"
           ><v-card :height="580" class="mt-3">
@@ -255,3 +248,4 @@ const days = [
     </v-stepper>
   </v-container>
 </template>
+<style scoped></style>
