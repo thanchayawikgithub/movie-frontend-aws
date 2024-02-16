@@ -45,11 +45,13 @@ onMounted(async () => {
                 <p style="font-size: 22px">{{ movie.movieName }}</p>
                 <div class="d-flex mt-3">
                   <v-icon>{{ mdiTagOutline }}</v-icon>
-                  <p style="font-size: 18px" class="ml-3">{{ movie.categories.join(' / ') }}</p>
+                  <p style="font-size: 15px" class="ml-3">
+                    {{ movie?.categories.map((category) => category.movieCatName).join('/') }}
+                  </p>
                 </div>
                 <div class="d-flex mt-3">
                   <v-icon>{{ mdiClockTimeThreeOutline }}</v-icon>
-                  <p style="font-size: 18px" class="ml-3">{{ movie.movieLength }} นาที</p>
+                  <p style="font-size: 15px" class="ml-3">{{ movie.movieLength }} นาที</p>
                 </div>
                 <p style="text-align: center; font-size: 18px; margin-top: 12rem">
                   คลิกเพื่อดูเพิ่มเติม

@@ -19,8 +19,8 @@ const movieStore = useMovieStore()
           >
             <v-card class="pa-2" :width="1000" :height="715">
               <v-container fluid style="overflow-y: scroll; height: 100%"
-                ><v-row
-                  ><v-col v-for="movie in movieStore.nowShowingMovie" :key="movie.id" cols="3"
+                ><v-row>
+                  <!-- <v-col v-for="movie in movieStore.nowShowingMovie" :key="movie.id" cols="3"
                     ><v-card hover
                       ><v-card-title
                         style="
@@ -32,8 +32,12 @@ const movieStore = useMovieStore()
                         >{{ movie.title }}</v-card-title
                       ><v-img
                         :src="movie.poster"
-                      ></v-img></v-card></v-col></v-row></v-container></v-card></v-overlay
-        ></v-btn> </v-col
+                      ></v-img></v-card></v-col> -->
+                </v-row></v-container
+              ></v-card
+            ></v-overlay
+          ></v-btn
+        > </v-col
       ><v-col cols="4"></v-col
     ></v-row>
     <p style="font-size: 35px; text-align: center" class="mt-10">กำลังฉาย</p>

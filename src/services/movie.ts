@@ -10,5 +10,8 @@ const getMovie = (movieId: number) => {
 const getShowtime = (showtimeId: number) => {
   return axios.get(`movies/showtime/${showtimeId}`)
 }
+const getShowtimesTheater = (movieId: number) => {
+  return axios.get(`theaters/showtimes/movie/${movieId}`)
+}
 
-export default { getMovies, getMovie, getShowtime }
+export default { getMovies, getMovie, getShowtime, getShowtimesTheater }

@@ -3,6 +3,7 @@ import router from '@/router'
 import { useMovieStore } from '@/stores/movie'
 import type Movie from '@/types/movie'
 import type Showtime from '@/types/showtime'
+import type Theater from '@/types/theater'
 import {
   mdiClock,
   mdiClockOutline,
@@ -22,14 +23,33 @@ const showtime = ref<Showtime>()
 const selectedShowtime = ref<number>()
 const deluxes = ['L', 'K', 'J', 'I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A', 'AA']
 const seats = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+
+const getFormattedTime = (dateObject: Date) => {
+  const hours = dateObject.getHours()
+  const minutes = dateObject.getMinutes()
+  const formattedTime = `${padZero(hours)}:${padZero(minutes)}`
+
+  return formattedTime
+}
+
+const padZero = (value: number) => {
+  // Add leading zero if the value is less than 10
+  return value < 10 ? `0${value}` : value
+}
+
+const showtimesTheater = ref<Theater[]>([])
+
 onMounted(async () => {
   movie.value = await movieStore.getMovie(movieId)
   console.log(movie.value)
+  showtimesTheater.value = await movieStore.getShowtimesTheater(movieId)
+  console.log(showtimesTheater.value)
 })
 
 watch(step, async () => {
   if (step.value === 2) {
     showtime.value = await movieStore.getShowtime(selectedShowtime.value!)
+    console.log(showtime.value)
   }
 })
 const model = ref<null>()
@@ -63,7 +83,9 @@ const days = [
         </v-col>
         <v-col cols="9" class="d-flex flex-column">
           <h2 class="mb-5">{{ movie?.movieName }}</h2>
-          <p>หมวดหมู่ : {{ movie?.categories.join() }}</p>
+          <p>
+            หมวดหมู่ : {{ movie?.categories.map((category) => category.movieCatName).join('/') }}
+          </p>
           <p class="mt-3">
             <v-icon class="mr-1">{{ mdiClockOutline }}</v-icon
             >{{ movie?.movieLength }} นาที
@@ -82,9 +104,9 @@ const days = [
     </v-card>
     <v-stepper alt-labels class="mt-5" v-model="step"
       ><v-stepper-header
-        ><v-stepper-item title="เลือกรอบฉาย" :value="1"></v-stepper-item
-        ><v-stepper-item title="เลือกที่นั่ง" :value="2"></v-stepper-item
-        ><v-stepper-item title="การชำระเงิน" :value="3"></v-stepper-item
+        ><v-stepper-item title="เลือกรอบฉาย" :value="1"></v-stepper-item><v-divider></v-divider>
+        <v-stepper-item title="เลือกที่นั่ง" :value="2"></v-stepper-item><v-divider></v-divider
+        ><v-stepper-item title="การชำระเงิน" :value="3"></v-stepper-item><v-divider></v-divider
         ><v-stepper-item title="สิ้นสุด" :value="4"></v-stepper-item
       ></v-stepper-header>
 
@@ -136,15 +158,15 @@ const days = [
                   <v-divider></v-divider>
                 </v-row>
                 <v-row
-                  v-for="showtime in movie?.showtimes"
+                  v-for="theater in showtimesTheater"
                   style="height: 15vh"
-                  :key="showtime.showId"
+                  :key="theater.theaterId"
                 >
                   <v-col
                     ><v-row
                       ><v-col cols="2"
                         ><p class="text-center mt-5" style="font-size: 18px">
-                          {{ showtime.showId }}
+                          {{ theater.theaterName }}
                         </p>
                       </v-col>
                       <v-divider vertical style="height: 15vh"></v-divider
@@ -152,10 +174,13 @@ const days = [
                         ><v-icon>{{ mdiVolumeHigh }}</v-icon
                         >ENG/TH | 2D <br />
                         <v-btn
-                          class="mt-2"
+                          v-for="showtime in theater.showtimes"
+                          :key="showtime.showId"
+                          class="mt-2 ml-3"
                           style="background-color: #b91c1c; color: white"
-                          @click="step = 2"
-                          >10:30</v-btn
+                          @click="(selectedShowtime = showtime.showId), (step = 2)"
+                        >
+                          {{ getFormattedTime(new Date(showtime.showStart)) }}</v-btn
                         >
                       </v-col>
                     </v-row></v-col

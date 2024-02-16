@@ -33,7 +33,9 @@ onMounted(async () => {
       </v-col>
       <v-col cols="3" class="d-flex flex-column ml-8 mt-2">
         <h1 class="mb-5" style="color: black">{{ movie?.movieName }}</h1>
-        <p style="color: black">หมวดหมู่ : {{ movie?.categories.join() }}</p>
+        <p style="color: black">
+          หมวดหมู่ : {{ movie?.categories.map((category) => category.movieCatName).join('/') }}
+        </p>
         <p class="mt-3" style="color: black">
           <v-icon class="mr-1">{{ mdiClockOutline }}</v-icon
           >{{ movie?.movieLength }} นาที
@@ -54,7 +56,7 @@ onMounted(async () => {
           class="ml-5"
           width="105%"
           height="100%"
-          :src="`http://localhost:3000/movies/${movie?.movieId}/trailer`"
+          :src="`http://www.youtube.com/embed/${movie?.movieTrailer}`"
           frameborder="0"
           allowfullscreen
         ></iframe>
@@ -64,7 +66,7 @@ onMounted(async () => {
     <v-row>
       <v-col cols="7">
         <h2 class="mb-1" style="color: black">เรื่องย่อ</h2>
-        <p class="mt-1" style="color: black">{{ movie?.movieDesc }} นาที</p></v-col
+        <p class="mt-1" style="color: black">{{ movie?.movieDesc }}</p></v-col
       >
     </v-row>
     <v-divider style="border: 1px solid black" class="mt-3 mb-3"></v-divider>
