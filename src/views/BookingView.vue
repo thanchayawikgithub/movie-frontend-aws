@@ -52,21 +52,14 @@ const days = [
 </script>
 <template>
   <v-container fluid>
-    <v-card
-      :width="1200"
-      :height="375"
-      class="mx-auto mt-5 pa-3"
-      style="position: relative; z-index: 2"
-    >
+    <v-card :width="1200" :height="405" class="mx-auto mt-5 pa-3">
       <v-row>
         <v-col cols="3">
-          <!-- <v-card
-            :width="280"
-            :height="350"
-            class="mx-auto mt-0 pa-3"
-            style="position: relative; z-index: 1"
-          > -->
-          <!-- <v-img :src="`http://localhost:3000/movies/image/${movie!.movieImage}`"></v-img> -->
+          <v-img
+            :height="385"
+            :width="260"
+            :src="`http://localhost:3000/movies/${movie?.movieId}/image`"
+          ></v-img>
         </v-col>
         <v-col cols="9" class="d-flex flex-column">
           <h2 class="mb-5">{{ movie?.movieName }}</h2>

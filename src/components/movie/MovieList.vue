@@ -32,7 +32,7 @@ onMounted(async () => {
             @click="toBookingPage(movie.movieId)"
           >
             <v-img
-              :src="`http://localhost:3000/movies/image/${movie.movieImage}`"
+              :src="`http://localhost:3000/movies/${movie?.movieId}/image`"
               :height="385"
               :width="260"
               style="margin-top: 5px; border-radius: 1rem"
