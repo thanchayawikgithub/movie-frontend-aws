@@ -2,11 +2,19 @@
 import { useMovieStore } from '@/stores/movie'
 import { mdiTagOutline, mdiClockTimeThreeOutline } from '@mdi/js'
 import router from '@/router'
-const movieStore = useMovieStore()
+import { onMounted, ref } from 'vue'
+import type Movie from '@/types/movie'
 
-const toBookingPage = (movieId: number) => {
+const movieStore = useMovieStore()
+const movies = ref<Movie[]>([])
+const toBookingPage = async (movieId: number) => {
   router.push({ name: 'booking', params: { movieId: movieId } })
 }
+
+onMounted(async () => {
+  ///ข้อมูล
+  movies.value = await movieStore.getMovies()
+})
 </script>
 <template>
   <v-container fluid style="padding-inline: 10vw"

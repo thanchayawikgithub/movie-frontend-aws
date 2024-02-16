@@ -2,6 +2,7 @@
 import router from '@/router'
 import { useMovieStore } from '@/stores/movie'
 import type Movie from '@/types/movie'
+import type Showtime from '@/types/showtime'
 import {
   mdiClock,
   mdiClockOutline,
@@ -10,16 +11,25 @@ import {
   mdiSofaSingle,
   mdiSofa
 } from '@mdi/js'
+import { watch } from 'vue'
 import { onMounted, ref } from 'vue'
 
 const movieId = +router.currentRoute.value.params.movieId.toString()
 const step = ref(1)
 const movieStore = useMovieStore()
 const movie = ref<Movie>()
+const showtime = ref<Showtime>()
+const selectedShowtime = ref<number>()
 const deluxes = ['L', 'K', 'J', 'I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A', 'AA']
 const seats = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-onMounted(() => {
-  movie.value = movieStore.nowShowingMovie.find((movie) => movie.id === movieId)
+onMounted(async () => {
+  movie.value = await movieStore.getMovie(movieId)
+})
+
+watch(step, async () => {
+  if (step.value === 2) {
+    showtime.value = await movieStore.getShowtime(selectedShowtime.value!)
+  }
 })
 const model = ref<null>()
 const days = [

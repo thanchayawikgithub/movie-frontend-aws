@@ -1,7 +1,7 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import type Movie from '@/types/movie'
-
+import movieService from '@/services/movie'
 export const useMovieStore = defineStore('movie', () => {
   const nowShowingMovie = ref([
     {
@@ -127,5 +127,32 @@ export const useMovieStore = defineStore('movie', () => {
     // }
   ])
 
-  return { nowShowingMovie }
+  const getMovies = async () => {
+    try {
+      const response = await movieService.getMovies()
+      return response.data
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  const getMovie = async (movieId: number) => {
+    try {
+      const response = await movieService.getMovie(movieId)
+      return response.data
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  const getShowtime = async (showId: number) => {
+    try {
+      const response = await movieService.getShowtime(showId)
+      return response.data
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  return { nowShowingMovie, getMovies, getShowtime, getMovie }
 })
