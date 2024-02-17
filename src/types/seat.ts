@@ -1,5 +1,5 @@
-import type ShowtimeSeat from './showtime_seat.entity'
 import type Theater from './theater'
+import type ShowtimeSeat from './showtime_seat'
 
 export default interface Seat {
   seatId: number
@@ -16,7 +16,7 @@ export default interface Seat {
 
   updateDate: Date
 
-  ticket: Ticket
+  // ticket: Ticket
 
   theater: Theater
 

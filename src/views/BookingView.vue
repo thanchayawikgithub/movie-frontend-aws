@@ -2,6 +2,7 @@
 import router from '@/router'
 import { useMovieStore } from '@/stores/movie'
 import type Movie from '@/types/movie'
+import type Seat from '@/types/seat'
 import type Showtime from '@/types/showtime'
 import type Theater from '@/types/theater'
 import {
@@ -22,9 +23,9 @@ const movieStore = useMovieStore()
 const movie = ref<Movie>()
 const showtime = ref<Showtime>()
 const selectedShowtime = ref<number>()
-const deluxes = ['L', 'K', 'J', 'I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A', 'AA']
+const customRowOrder = ['L', 'K', 'J', 'I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A', 'AA']
 const seats = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-
+const rows = ref<{ name: string; seat: Seat[] }[]>([])
 const getFormattedTime = (dateObject: Date) => {
   const hours = dateObject.getHours()
   const minutes = dateObject.getMinutes()
@@ -36,6 +37,12 @@ const getFormattedTime = (dateObject: Date) => {
 const padZero = (value: number) => {
   // Add leading zero if the value is less than 10
   return value < 10 ? `0${value}` : value
+}
+
+function findRow(seatNumber: string) {
+  // Extract alphabetic characters from the seat number
+  const row = seatNumber.match(/[A-Za-z]+/)![0]
+  return row
 }
 
 const showtimesTheater = ref<Theater[]>([])
@@ -51,6 +58,35 @@ watch(step, async () => {
   if (step.value === 2) {
     showtime.value = await movieStore.getShowtime(selectedShowtime.value!)
     console.log(showtime.value)
+    showtime.value?.showtimeseats.forEach((showtimeSeat) => {
+      // Assuming showtimeSeat contains seat information
+      const rowName = findRow(showtimeSeat.seat.seatNumber) // Assuming you have the findRow function
+      let row = rows.value.find((row) => row.name === rowName)
+
+      // If the row doesn't exist, create a new row object
+      if (!row) {
+        row = { name: rowName, seat: [] }
+        rows.value.push(row)
+      }
+
+      // Add the seat to the row
+      row.seat.push(showtimeSeat.seat)
+    })
+    rows.value.sort((a, b) => {
+      return customRowOrder.indexOf(a.name) - customRowOrder.indexOf(b.name)
+    })
+
+    // Sort seats within each row
+    rows.value.forEach((row) => {
+      row.seat.sort((a, b) => {
+        // Extract the numeric part of seat numbers
+        const numA = parseInt(a.seatNumber.match(/\d+/)![0])
+        const numB = parseInt(b.seatNumber.match(/\d+/)![0])
+        // Compare the numeric parts
+        return numA - numB
+      })
+    })
+    console.log(rows.value)
   }
 })
 const model = ref(0)
@@ -111,7 +147,6 @@ const days = [
         ><v-stepper-item title="การชำระเงิน" :value="3"></v-stepper-item><v-divider></v-divider
         ><v-stepper-item title="สิ้นสุด" :value="4"></v-stepper-item
       ></v-stepper-header>
-
       <v-stepper-window
         ><v-stepper-window-item :value="1">
           <v-card>
@@ -184,7 +219,7 @@ const days = [
           </v-card>
         </v-stepper-window-item>
         <v-stepper-window-item :value="2"
-          ><v-card :height="580" class="mt-3">
+          ><v-card :height="580">
             <v-row>
               <v-col cols="3"
                 ><v-card
@@ -194,20 +229,22 @@ const days = [
                   class="ml-5 mt-5 pt-2"
                   style="font-size: 13px; font-weight: bold; text-align: center"
                   >โรงภาพยนตร์<br />
-                  <p style="font-size: 30px; text-align: center">3</p></v-card
+                  <p style="font-size: 30px; text-align: center">
+                    {{ showtime?.theater.theaterName }}
+                  </p></v-card
                 ></v-col
               ><v-col cols="1"
                 ><v-icon size="35" class="mt-7 ml-1" color="#fb7185">{{ mdiSofaSingle }}</v-icon
                 ><br /><span>Deluxe </span><br />
-                <span class="pl-1">170฿</span></v-col
+                <span class="pl-1">200฿</span></v-col
               ><v-col cols="1"
                 ><v-icon size="35" class="mt-7 ml-3" color="#e11d48">{{ mdiSofaSingle }}</v-icon
                 ><br /><span>Premium </span><br />
-                <span class="pl-3">190฿</span></v-col
+                <span class="pl-3">220฿</span></v-col
               ><v-col cols="3"
                 ><v-icon size="35" class="mt-7 ml-8" color="#881337">{{ mdiSofa }}</v-icon
                 ><br /><span>Sofa Sweet(Pair) </span><br />
-                <span class="pl-8">500฿</span></v-col
+                <span class="pl-8">600฿</span></v-col
               >
               <v-col
                 ><v-card
@@ -232,12 +269,12 @@ const days = [
                 ></v-col
               ></v-row
             ><v-row
-              v-for="(deluxe, index) in deluxes"
+              v-for="(row, index) in rows"
               :key="index"
               class="mt-3 ml-4"
               style="font-size: 12px; font-weight: bold"
-              ><p class="mt-2">{{ deluxe }}</p>
-              <v-icon v-for="(seat, index) in seats" :key="index" class="ml-5" size="29">{{
+              ><p class="mt-2">{{ row.name }}</p>
+              <v-icon v-for="seat in row.seat" :key="seat.seatId" class="ml-5" size="29">{{
                 mdiSofaSingle
               }}</v-icon>
             </v-row>
