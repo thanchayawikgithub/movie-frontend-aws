@@ -45,6 +45,16 @@ function findRow(seatNumber: string) {
   return row
 }
 
+const getSeatColor = (seat: Seat) => {
+  switch (seat.seatType) {
+    case 'Deluxe':
+      return '#fb7185'
+    case 'Premium':
+      return '#e11d48'
+    default:
+      return '#881337'
+  }
+}
 const showtimesTheater = ref<Theater[]>([])
 
 onMounted(async () => {
@@ -140,7 +150,7 @@ const days = [
         </v-col>
       </v-row>
     </v-card>
-    <v-stepper alt-labels class="mt-5" v-model="step"
+    <v-stepper alt-labels class="mt-5" v-model="step" :height="1000"
       ><v-stepper-header
         ><v-stepper-item title="เลือกรอบฉาย" :value="1"></v-stepper-item><v-divider></v-divider>
         <v-stepper-item title="เลือกที่นั่ง" :value="2"></v-stepper-item><v-divider></v-divider
@@ -219,7 +229,7 @@ const days = [
           </v-card>
         </v-stepper-window-item>
         <v-stepper-window-item :value="2"
-          ><v-card :height="580">
+          ><v-card :height="800">
             <v-row>
               <v-col cols="3"
                 ><v-card
@@ -274,9 +284,14 @@ const days = [
               class="mt-3 ml-4"
               style="font-size: 12px; font-weight: bold"
               ><p class="mt-2">{{ row.name }}</p>
-              <v-icon v-for="seat in row.seat" :key="seat.seatId" class="ml-5" size="29">{{
-                mdiSofaSingle
-              }}</v-icon>
+              <v-icon
+                v-for="seat in row.seat"
+                :key="seat.seatId"
+                size="xx-large"
+                class="ml-3"
+                :color="getSeatColor(seat)"
+                >{{ seat.seatType === 'Sofa Sweet (Pair)' ? mdiSofa : mdiSofaSingle }}</v-icon
+              >
             </v-row>
           </v-card></v-stepper-window-item
         ><v-stepper-window-item :value="3">3</v-stepper-window-item
