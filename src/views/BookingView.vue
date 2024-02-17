@@ -4,6 +4,7 @@ import { useMovieStore } from '@/stores/movie'
 import type Movie from '@/types/movie'
 import type Seat from '@/types/seat'
 import type Showtime from '@/types/showtime'
+import type ShowtimeSeat from '@/types/showtime_seat'
 import type Theater from '@/types/theater'
 import {
   mdiClock,
@@ -12,7 +13,9 @@ import {
   mdiVolumeHigh,
   mdiSofaSingle,
   mdiSofa,
-  mdiCloseCircleOutline
+  mdiCloseCircleOutline,
+  mdiAccountCircleOutline,
+  mdiCheckCircle
 } from '@mdi/js'
 import { watch } from 'vue'
 import { onMounted, ref } from 'vue'
@@ -25,7 +28,7 @@ const showtime = ref<Showtime>()
 const selectedShowtime = ref<number>()
 const customRowOrder = ['L', 'K', 'J', 'I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A', 'AA']
 const seats = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-const rows = ref<{ name: string; seat: Seat[] }[]>([])
+const rows = ref<{ name: string; showtimeSeats: ShowtimeSeat[] }[]>([])
 const getFormattedTime = (dateObject: Date) => {
   const hours = dateObject.getHours()
   const minutes = dateObject.getMinutes()
@@ -33,7 +36,7 @@ const getFormattedTime = (dateObject: Date) => {
 
   return formattedTime
 }
-
+const selectedSeats = ref<ShowtimeSeat[]>([])
 const padZero = (value: number) => {
   // Add leading zero if the value is less than 10
   return value < 10 ? `0${value}` : value
@@ -45,14 +48,39 @@ function findRow(seatNumber: string) {
   return row
 }
 
-const getSeatColor = (seat: Seat) => {
-  switch (seat.seatType) {
-    case 'Deluxe':
-      return '#fb7185'
-    case 'Premium':
-      return '#e11d48'
-    default:
-      return '#881337'
+const getSeatColor = (showtimeSeat: ShowtimeSeat) => {
+  if (showtimeSeat.showSeatStatus === false) {
+    return 'gray'
+  } else if (selectedSeats.value.includes(showtimeSeat)) {
+    return 'red'
+  } else {
+    switch (showtimeSeat.seat.seatType) {
+      case 'Deluxe':
+        return '#fb7185'
+      case 'Premium':
+        return '#e11d48'
+      default:
+        return '#881337'
+    }
+  }
+}
+
+const getSeatIcon = (showtimeSeat: ShowtimeSeat) => {
+  if (showtimeSeat.showSeatStatus === false) {
+    return mdiAccountCircleOutline
+  } else if (selectedSeats.value.includes(showtimeSeat)) {
+    return mdiCheckCircle
+  } else {
+    switch (showtimeSeat.seat.seatType) {
+      case 'Sofa Sweet (Pair)':
+        return mdiSofa
+      case 'Deluxe':
+        return mdiSofaSingle
+      case 'Premium':
+        return mdiSofaSingle
+      default:
+        return mdiSofaSingle
+    }
   }
 }
 const showtimesTheater = ref<Theater[]>([])
@@ -69,29 +97,27 @@ watch(step, async () => {
     showtime.value = await movieStore.getShowtime(selectedShowtime.value!)
     console.log(showtime.value)
     showtime.value?.showtimeseats.forEach((showtimeSeat) => {
-      // Assuming showtimeSeat contains seat information
-      const rowName = findRow(showtimeSeat.seat.seatNumber) // Assuming you have the findRow function
+      const rowName = findRow(showtimeSeat.seat.seatNumber)
       let row = rows.value.find((row) => row.name === rowName)
 
-      // If the row doesn't exist, create a new row object
       if (!row) {
-        row = { name: rowName, seat: [] }
+        row = { name: rowName, showtimeSeats: [] }
         rows.value.push(row)
       }
 
-      // Add the seat to the row
-      row.seat.push(showtimeSeat.seat)
+      row.showtimeSeats.push(showtimeSeat)
     })
+
     rows.value.sort((a, b) => {
       return customRowOrder.indexOf(a.name) - customRowOrder.indexOf(b.name)
     })
 
     // Sort seats within each row
     rows.value.forEach((row) => {
-      row.seat.sort((a, b) => {
+      row.showtimeSeats.sort((a, b) => {
         // Extract the numeric part of seat numbers
-        const numA = parseInt(a.seatNumber.match(/\d+/)![0])
-        const numB = parseInt(b.seatNumber.match(/\d+/)![0])
+        const numA = parseInt(a.seat.seatNumber.match(/\d+/)![0])
+        const numB = parseInt(b.seat.seatNumber.match(/\d+/)![0])
         // Compare the numeric parts
         return numA - numB
       })
@@ -281,16 +307,17 @@ const days = [
             ><v-row
               v-for="(row, index) in rows"
               :key="index"
-              class="mt-3 ml-4"
-              style="font-size: 12px; font-weight: bold"
+              class="mt-3 ml-5"
+              style="font-size: 15px; font-weight: bold"
               ><p class="mt-2">{{ row.name }}</p>
               <v-icon
-                v-for="seat in row.seat"
-                :key="seat.seatId"
+                v-for="showtimeSeat in row.showtimeSeats"
+                :key="showtimeSeat.seat.seatId"
                 size="xx-large"
                 class="ml-3"
-                :color="getSeatColor(seat)"
-                >{{ seat.seatType === 'Sofa Sweet (Pair)' ? mdiSofa : mdiSofaSingle }}</v-icon
+                @click="selectedSeats.push(showtimeSeat)"
+                :color="getSeatColor(showtimeSeat)"
+                >{{ getSeatIcon(showtimeSeat) }}</v-icon
               >
             </v-row>
           </v-card></v-stepper-window-item
