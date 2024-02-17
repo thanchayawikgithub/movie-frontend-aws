@@ -85,6 +85,14 @@ const getSeatIcon = (showtimeSeat: ShowtimeSeat) => {
 }
 const showtimesTheater = ref<Theater[]>([])
 
+const formatShowDate = (dateTime: Date | undefined): string => {
+  if (!dateTime) return ''
+  const dateObject = new Date(dateTime)
+  const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' }
+  const formattedDate = dateObject.toLocaleDateString('th-TH', options)
+
+  return formattedDate
+}
 onMounted(async () => {
   movie.value = await movieStore.getMovie(movieId)
   console.log(movie.value)
@@ -257,19 +265,19 @@ const days = [
         <v-stepper-window-item :value="2"
           ><v-card :height="800">
             <v-row>
-              <v-col cols="3"
+              <v-col cols="3" align="center"
                 ><v-card
                   variant="outlined"
                   :height="90"
                   :width="100"
-                  class="ml-5 mt-5 pt-2"
+                  class="mt-5 pt-2"
                   style="font-size: 13px; font-weight: bold; text-align: center"
-                  >โรงภาพยนตร์<br />
-                  <p style="font-size: 30px; text-align: center">
+                >
+                  <p style="font-size: 20px; text-align: center">
                     {{ showtime?.theater.theaterName }}
                   </p></v-card
                 ></v-col
-              ><v-col cols="1"
+              ><v-col cols="2" align="center"
                 ><v-icon size="35" class="mt-7 ml-1" color="#fb7185">{{ mdiSofaSingle }}</v-icon
                 ><br /><span>Deluxe </span><br />
                 <span class="pl-1">200฿</span></v-col
@@ -277,28 +285,52 @@ const days = [
                 ><v-icon size="35" class="mt-7 ml-3" color="#e11d48">{{ mdiSofaSingle }}</v-icon
                 ><br /><span>Premium </span><br />
                 <span class="pl-3">220฿</span></v-col
-              ><v-col cols="3"
+              ><v-col cols="1"
                 ><v-icon size="35" class="mt-7 ml-8" color="#881337">{{ mdiSofa }}</v-icon
                 ><br /><span>Sofa Sweet(Pair) </span><br />
                 <span class="pl-8">600฿</span></v-col
               >
               <v-col
                 ><v-card
-                  :height="540"
+                  :height="630"
                   :width="450"
                   class="mt-5 ml-5"
                   style="position: absolute; background-color: #b91c1c"
-                  >ssd</v-card
-                ></v-col
+                  ><v-row>
+                    <v-col style="font-size: 22px" class="ml-5 mt-5">{{ movie?.movieName }}</v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col style="font-size: 20px" class="ml-5 mt-1 pb-0"
+                      >{{ formatShowDate(showtime?.showStart) }}
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col style="font-size: 20px" class="ml-5 pt-0"
+                      >{{ getFormattedTime(new Date(showtime?.showStart)) }}
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col style="font-size: 22px" class="ml-5 mt-1 pb-0"
+                      >{{ showtime?.theater.theaterName }}
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col style="font-size: 20px" class="ml-5 pt-0">สกาลาบางแสน </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col align="center" class="mt-9"
+                      ><v-card :width="300" :height="300">ssss</v-card></v-col
+                    >
+                  </v-row>
+                </v-card></v-col
               >
             </v-row>
-            <v-row
-              ><v-col style="text-align: center"
+            <v-row class="justify-center"
+              ><v-col style="text-align: center" cols="8"
                 ><v-card
                   rounded="0"
-                  :width="950"
+                  :width="750"
                   :height="50"
-                  class="ml-6 ;"
                   variant="outlined"
                   style="color: #b91c1c"
                   ><p style="color: black; font-weight: bold" class="pt-2">จอภาพยนตร์</p></v-card
@@ -307,8 +339,8 @@ const days = [
             ><v-row
               v-for="(row, index) in rows"
               :key="index"
-              class="mt-3 ml-5"
-              style="font-size: 15px; font-weight: bold"
+              class="mt-3 ml-5 justify-center"
+              style="font-size: 15px; font-weight: bold; padding-right: 550px"
               ><p class="mt-2">{{ row.name }}</p>
               <v-icon
                 v-for="showtimeSeat in row.showtimeSeats"
