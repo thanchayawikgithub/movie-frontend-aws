@@ -451,7 +451,6 @@ const days = [
                     '-'
                   }}
                 </p>
-                <!-- <p>ราคารวม : {{ receipt.recTotalPrice + ' บาท' }}</p> -->
               </v-col></v-row
             >
             <v-card-title
@@ -464,7 +463,7 @@ const days = [
               class="mt-10"
               >ราคารวม : {{ receipt.recTotalPrice + ' บาท' }}</v-card-title
             >
-            <v-card-title style="text-align: center">เลือกวิธีการชำระเงิน</v-card-title
+            <v-card-title style="text-align: center" class="mt-3">เลือกวิธีการชำระเงิน</v-card-title
             ><v-row class="mt-3"
               ><v-col
                 ><v-btn
@@ -473,8 +472,17 @@ const days = [
                   stacked
                   elevation="1"
                   @click="receipt.recPaymentMethod = 'credit card'"
-                  ><v-icon size="100">{{ mdiCreditCardOutline }}</v-icon>
-                  <h3 class="mt-3">บัตรเครดิต / บัตรเดบิต</h3></v-btn
+                  ><v-icon
+                    size="100"
+                    :color="receipt.recPaymentMethod === 'credit card' ? 'red' : 'black'"
+                    >{{ mdiCreditCardOutline }}</v-icon
+                  >
+                  <h3
+                    class="mt-3"
+                    :style="{ color: receipt.recPaymentMethod === 'credit card' ? 'red' : 'black' }"
+                  >
+                    บัตรเครดิต / บัตรเดบิต
+                  </h3></v-btn
                 ></v-col
               ><v-col>
                 <v-btn
@@ -483,8 +491,17 @@ const days = [
                   stacked
                   elevation="1"
                   @click="receipt.recPaymentMethod = 'qr-payment'"
-                  ><v-icon size="100">{{ mdiQrcodeScan }}</v-icon>
-                  <h3 class="mt-3">QR-Payment</h3></v-btn
+                  ><v-icon
+                    size="100"
+                    :color="receipt.recPaymentMethod === 'qr-payment' ? 'red' : 'black'"
+                    >{{ mdiQrcodeScan }}</v-icon
+                  >
+                  <h3
+                    class="mt-3"
+                    :style="{ color: receipt.recPaymentMethod === 'qr-payment' ? 'red' : 'black' }"
+                  >
+                    QR-Payment
+                  </h3></v-btn
                 >
               </v-col></v-row
             ><v-btn
