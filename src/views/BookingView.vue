@@ -211,7 +211,7 @@ const days = [
         </v-col>
       </v-row>
     </v-card>
-    <v-stepper alt-labels class="mt-5" v-model="step" :height="1000"
+    <v-stepper alt-labels class="mt-5" v-model="step" :height="1100"
       ><v-stepper-header
         ><v-stepper-item title="เลือกรอบฉาย" :value="1" color="red"></v-stepper-item
         ><v-divider></v-divider>
@@ -292,57 +292,123 @@ const days = [
             </v-expand-transition>
           </v-card>
         </v-stepper-window-item>
-        <v-stepper-window-item :value="2"
-          ><v-card :height="700">
+        <v-stepper-window-item :value="2">
+          <v-card :height="700">
             <v-row>
-              <v-col cols="3" align="center"
-                ><v-card
-                  variant="outlined"
-                  :height="90"
-                  :width="100"
-                  class="mt-5 pt-2"
-                  style="font-size: 13px; font-weight: bold; text-align: center"
-                >
-                  <p style="font-size: 20px; text-align: center">
-                    {{ showtime?.theater.theaterName }}
-                  </p></v-card
-                ></v-col
-              ><v-col cols="2" align="center"
-                ><v-icon size="35" class="mt-7 ml-1" color="#fb7185">{{ mdiSofaSingle }}</v-icon
-                ><br /><span>Deluxe </span><br />
-                <span class="pl-1">200฿</span></v-col
-              ><v-col cols="1"
-                ><v-icon size="35" class="mt-7 ml-3" color="#e11d48">{{ mdiSofaSingle }}</v-icon
-                ><br /><span>Premium </span><br />
-                <span class="pl-3">220฿</span></v-col
-              ><v-col cols="1"
-                ><v-icon size="35" class="mt-7 ml-8" color="#881337">{{ mdiSofa }}</v-icon
-                ><br /><span>Sofa Sweet(Pair) </span><br />
-                <span class="pl-8">600฿</span></v-col
-              >
+              <v-col cols="7">
+                <v-card variant="flat" :height="700">
+                  <v-row>
+                    <v-col cols="4" align="right"
+                      ><v-card
+                        variant="outlined"
+                        :height="90"
+                        :width="100"
+                        class="mt-5 pt-2 mr-10"
+                        style="font-size: 13px; font-weight: bold; text-align: center"
+                      >
+                        <p style="font-size: 20px; text-align: center">
+                          {{ showtime?.theater.theaterName }}
+                        </p></v-card
+                      ></v-col
+                    ><v-col cols="2" align="right" class="ml-0"
+                      ><v-icon size="35" class="mt-7 mr-1" color="#fb7185">{{
+                        mdiSofaSingle
+                      }}</v-icon
+                      ><br /><span>Deluxe </span><br />
+                      <span class="pr-2">200฿</span></v-col
+                    ><v-col cols="2" align="center"
+                      ><v-icon size="35" class="mt-7 mr-0" color="#e11d48">{{
+                        mdiSofaSingle
+                      }}</v-icon
+                      ><br /><span>Premium </span><br />
+                      <span class="pr-0">220฿</span></v-col
+                    ><v-col cols="2"
+                      ><v-icon size="35" class="mt-7 ml-8" color="#881337">{{ mdiSofa }}</v-icon
+                      ><br /><span>Sofa Sweet(Pair) </span><br />
+                      <span class="pl-8">600฿</span></v-col
+                    >
+                  </v-row>
+                  <v-row class="justify-center">
+                    <v-card
+                      rounded="0"
+                      :width="700"
+                      :height="50"
+                      class="ml-8 mb-7"
+                      variant="outlined"
+                      style="color: #b91c1c; text-align: center"
+                      ><p style="color: black; font-weight: bold" class="pt-2">
+                        จอภาพยนตร์
+                      </p></v-card
+                    ></v-row
+                  ><v-row
+                    v-for="(row, index) in rows"
+                    :key="index"
+                    class="mt-3 ml-5 justify-center"
+                    :style="{
+                      'font-size': '15px',
+                      'font-weight': 'bold'
+                    }"
+                  >
+                    <p
+                      class="mt-2"
+                      :style="{
+                        'margin-right': index === 12 ? '19px' : '0px',
+                        'padding-left': index === 12 ? '25px' : '0px'
+                      }"
+                    >
+                      {{ row.name }}
+                    </p>
+                    <v-icon
+                      v-for="showtimeSeat in row.showtimeSeats"
+                      :key="showtimeSeat.seat.seatId"
+                      size="xx-large"
+                      class="ml-3"
+                      @click="selectSeat(showtimeSeat)"
+                      :color="getSeatColor(showtimeSeat)"
+                      :style="{ 'margin-right': index === 12 ? '12px' : '0' }"
+                      >{{ getSeatIcon(showtimeSeat) }}
+                    </v-icon>
+                    <p
+                      class="mt-2"
+                      :style="{
+                        'margin-right': index === 12 ? '33px' : '0px',
+                        'margin-left': index === 12 ? '0px' : '12px',
+                        'padding-left': index === 12 ? '15px' : '0px'
+                      }"
+                    >
+                      {{ row.name }}
+                    </p>
+                  </v-row>
+                </v-card>
+              </v-col>
               <v-col
                 ><v-card
                   :height="630"
                   :width="450"
                   class="mt-5 ml-5 pa-5"
-                  style="position: absolute; background-color: #f1f5f9"
+                  style="background-color: #f1f5f9"
                   elevation="0"
                   ><v-row>
-                    <v-col style="font-size: 22px">{{ 'ภาพยนตร์ : ' + movie?.movieName }}</v-col>
+                    <v-col style="font-size: 22px; font-weight: bold">{{
+                      'ภาพยนตร์ : ' + movie?.movieName
+                    }}</v-col>
                   </v-row>
                   <v-row>
                     <v-col style="font-size: 20px"
-                      >{{ 'รอบฉาย : ' + formatShowDate(showtime?.showStart) }}
-                      {{
-                        showtime && showtime.showStart
-                          ? getFormattedTime(new Date(showtime.showStart)) + ' น.'
-                          : ''
-                      }}
+                      >รอบฉาย :
+                      <span style="color: #b91c1c"
+                        >{{ formatShowDate(showtime?.showStart) }}
+                        {{
+                          showtime && showtime.showStart
+                            ? getFormattedTime(new Date(showtime.showStart)) + ' น.'
+                            : ''
+                        }}</span
+                      >
                     </v-col>
                   </v-row>
 
                   <v-row>
-                    <v-col style="font-size: 22px"
+                    <v-col style="font-size: 20px"
                       >{{ 'โรงภาพยนตร์ : ' + showtime?.theater.theaterName }}
                     </v-col>
                   </v-row>
@@ -393,33 +459,6 @@ const days = [
                 </v-card></v-col
               >
             </v-row>
-            <v-row class="justify-center"
-              ><v-col style="text-align: center" cols="8"
-                ><v-card
-                  rounded="0"
-                  :width="750"
-                  :height="50"
-                  variant="outlined"
-                  style="color: #b91c1c"
-                  ><p style="color: black; font-weight: bold" class="pt-2">จอภาพยนตร์</p></v-card
-                ></v-col
-              ></v-row
-            ><v-row
-              v-for="(row, index) in rows"
-              :key="index"
-              class="mt-3 ml-5 justify-center"
-              style="font-size: 15px; font-weight: bold; padding-right: 550px"
-              ><p class="mt-2">{{ row.name }}</p>
-              <v-icon
-                v-for="showtimeSeat in row.showtimeSeats"
-                :key="showtimeSeat.seat.seatId"
-                size="xx-large"
-                class="ml-3"
-                @click="selectSeat(showtimeSeat)"
-                :color="getSeatColor(showtimeSeat)"
-                >{{ getSeatIcon(showtimeSeat) }}</v-icon
-              >
-            </v-row>
           </v-card></v-stepper-window-item
         ><v-stepper-window-item :value="3"
           ><v-card
@@ -427,29 +466,40 @@ const days = [
             rounded="lg"
             variant="outlined"
             class="pa-10"
-            ><v-card-title style="text-align: center">ยืนยันการซื้อ</v-card-title>
+            ><v-card-title
+              style="text-align: center; font-size: 30px; font-weight: bold"
+              class="mb-4"
+              >ยืนยันการซื้อ</v-card-title
+            >
             <v-row
               ><v-col align="center"
                 ><v-img
                   :src="`http://localhost:3000/movies/${movie?.movieId}/image`"
-                  :width="200"
+                  :width="250"
                 ></v-img></v-col
               ><v-col
-                ><h3>ภาพยนตร์ : {{ movie?.movieName }}</h3>
-                <p>
-                  รอบฉาย : {{ formatShowDate(showtime?.showStart) }}
-                  {{
-                    showtime && showtime.showStart
-                      ? getFormattedTime(new Date(showtime.showStart)) + ' น.'
-                      : ''
-                  }}
+                ><h3 style="font-size: 22px">ภาพยนตร์ : {{ movie?.movieName }}</h3>
+                <p class="mt-3">
+                  รอบฉาย :
+                  <span style="color: #b91c1c"
+                    >{{ formatShowDate(showtime?.showStart) }}
+                    {{
+                      showtime && showtime.showStart
+                        ? getFormattedTime(new Date(showtime.showStart)) + ' น.'
+                        : ''
+                    }}
+                  </span>
                 </p>
-                <p>
+                <p class="mt-3">
                   ทั้งนั่ง :
-                  {{
+                  <span style="color: #b91c1c">{{
                     receipt.tickets.map((showtimeSeat) => showtimeSeat.seat.seatNumber).join(',') ||
                     '-'
-                  }}
+                  }}</span>
+                </p>
+                <p class="mt-3">
+                  โรงภาพยนตร์ :
+                  {{ showtime?.theater.theaterName }}
                 </p>
               </v-col></v-row
             >
