@@ -14,7 +14,6 @@ const toBookingPage = async (movieId: number) => {
 onMounted(async () => {
   ///ข้อมูล
   movies.value = await movieStore.getMovies()
-  console.log(movies.value)
 })
 </script>
 <template>

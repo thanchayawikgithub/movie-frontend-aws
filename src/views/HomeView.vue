@@ -11,11 +11,6 @@ const movies = ref<Movie[]>([])
 const toBookingPage = async (movieId: number) => {
   router.push({ name: 'booking', params: { movieId: movieId } })
 }
-onMounted(async () => {
-  ///ข้อมูล
-  movies.value = await movieStore.getMovies()
-  console.log(movies.value)
-})
 </script>
 
 <template>

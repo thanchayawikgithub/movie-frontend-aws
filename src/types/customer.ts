@@ -1,3 +1,7 @@
+import type Card from './card'
+import type Receipt from './receipt'
+import type Review from './review'
+
 export default interface Customer {
   cusId: number
 
@@ -18,6 +22,4 @@ export default interface Customer {
   cards: Card[]
 
   receipts: Receipt[]
-
-  ticket: Ticket
 }

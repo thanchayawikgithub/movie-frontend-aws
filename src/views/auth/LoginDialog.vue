@@ -1,7 +1,12 @@
 <script setup lang="ts">
+import auth from '@/services/auth'
 import { useAuthStore } from '@/stores/auth'
 import { mdiWindowClose, mdiEmailOutline, mdiLockOutline } from '@mdi/js'
+import { ref } from 'vue'
 const authStore = useAuthStore()
+
+const email = ref('')
+const password = ref('')
 </script>
 <template>
   <v-dialog v-model="authStore.showLoginDialog"
@@ -32,6 +37,7 @@ const authStore = useAuthStore()
               SCALA
             </p>
             <v-text-field
+              v-model="email"
               variant="outlined"
               :prepend-inner-icon="mdiEmailOutline"
               label="อีเมล"
@@ -39,6 +45,7 @@ const authStore = useAuthStore()
               hide-details
             ></v-text-field
             ><v-text-field
+              v-model="password"
               type="password"
               variant="outlined"
               :prepend-inner-icon="mdiLockOutline"
@@ -55,6 +62,7 @@ const authStore = useAuthStore()
               "
               :height="50"
               class="mb-7"
+              @click="authStore.signIn(email, password)"
               >เข้าสู่ระบบ</v-btn
             ><v-divider :thickness="1" class="border-opacity-100 mb-7"></v-divider
             ><v-btn

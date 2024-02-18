@@ -2,7 +2,32 @@
 import { useAuthStore } from '@/stores/auth'
 import { mdiAccountOutline } from '@mdi/js'
 import router from '@/router'
+import { computed, onMounted, ref } from 'vue'
+import { watch } from 'vue'
+import type Customer from '@/types/customer'
 const authStore = useAuthStore()
+
+const customer = ref<Customer>()
+
+const buttonText = computed(() => {
+  if (authStore.isLoggedIn()) {
+    return `${customer.value?.cusFirstname} ${customer.value?.cusLastname}`
+  } else {
+    return 'สมัครสมาชิก/เข้าสู่ระบบ'
+  }
+})
+
+const buttonClickHandler = () => {
+  if (authStore.isLoggedIn()) {
+    authStore.signOut()
+  } else {
+    authStore.showLoginDialog = true
+  }
+}
+
+onMounted(async () => {
+  customer.value = await authStore.getCurrentUser()
+})
 </script>
 <template>
   <v-app-bar style="font-family: 'Times New Roman', Times, serif" density="default" :elevation="2"
@@ -24,6 +49,7 @@ const authStore = useAuthStore()
         </p></v-col
       ><v-col cols="4"
         ><v-btn
+          @click="buttonClickHandler"
           :prepend-icon="mdiAccountOutline"
           rounded="xl"
           style="
@@ -32,9 +58,9 @@ const authStore = useAuthStore()
             font-family: kanit;
             margin-top: 0.78rem;
           "
-          @click="authStore.showLoginDialog = true"
-          >สมัครสมาชิก/เข้าสู่ระบบ</v-btn
-        ></v-col
+        >
+          {{ buttonText }}
+        </v-btn></v-col
       ></v-row
     ></v-app-bar
   >
