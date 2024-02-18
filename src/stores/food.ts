@@ -9,5 +9,14 @@ export const useFoodStore = defineStore('food', () => {
       console.log(e)
     }
   }
-  return { getFoodByCat }
+
+  const getFoods = async () => {
+    try {
+      const response = await foodService.getFoods()
+      return response.data
+    } catch (e) {
+      console.log(e)
+    }
+  }
+  return { getFoodByCat, getFoods }
 })

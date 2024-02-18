@@ -1,5 +1,9 @@
 import axios from './axios'
 const getFoodsByCategory = (categoryId: number) => {
-  return axios.post(`foods/category/${categoryId}`)
+  return axios.get(`foods/category/${categoryId}`)
 }
-export default { getFoodsByCategory }
+
+const getFoods = () => {
+  return axios.get(`foods`)
+}
+export default { getFoodsByCategory, getFoods }

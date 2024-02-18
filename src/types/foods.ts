@@ -1,3 +1,6 @@
+import type FoodCategory from './food_category'
+import type ReceiptFood from './receipt_food'
+
 export default interface Food {
   foodId: number
 

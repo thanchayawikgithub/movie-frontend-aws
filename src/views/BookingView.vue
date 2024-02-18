@@ -40,7 +40,7 @@ const movieStore = useMovieStore()
 const movie = ref<Movie>()
 const showtime = ref<Showtime>()
 const foodStore = useFoodStore()
-const food = ref<Food[]>([])
+const foods = ref<Food[]>([])
 const selectedShowtime = ref<number>()
 const customRowOrder = ['L', 'K', 'J', 'I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A', 'AA']
 const rows = ref<{ name: string; showtimeSeats: ShowtimeSeat[] }[]>([])
@@ -122,8 +122,6 @@ onMounted(async () => {
   console.log(movie.value)
   showtimesTheater.value = await movieStore.getShowtimesTheater(movieId)
   console.log(showtimesTheater.value)
-  // food.value = await foodStore.getFoodByCat()
-  console.log(food.value)
 })
 watch(receipt.value.tickets, (newValue) => {
   receipt.value.recTotalPrice = newValue.reduce((total, ticket) => total + ticket.seat.seatPrice, 0)
@@ -159,6 +157,8 @@ watch(step, async () => {
         return numA - numB
       })
     })
+  } else if (step.value === 3) {
+    foods.value = await foodStore.getFoods()
   }
 })
 const model = ref(0)
