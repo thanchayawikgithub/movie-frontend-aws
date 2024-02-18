@@ -1,7 +1,26 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
+import { useCustomerStore } from '@/stores/customer'
 import { mdiEmailOutline, mdiLockOutline, mdiAccountOutline, mdiWindowClose } from '@mdi/js'
+import { ref } from 'vue'
 const authStore = useAuthStore()
+
+const email = ref('')
+const password = ref('')
+const firstname = ref('')
+const lastname = ref('')
+const customerStore = useCustomerStore()
+
+const addCustomer = async () => {
+  const data = {
+    email: email.value,
+    password: password.value,
+    firstname: firstname.value,
+    lastname: lastname.value
+  }
+  await customerStore.addCustomer(data)
+  authStore.showSignupDialog = false
+}
 </script>
 <template>
   <v-dialog v-model="authStore.showSignupDialog"
@@ -32,6 +51,7 @@ const authStore = useAuthStore()
               SCALA
             </p>
             <v-text-field
+              v-model="email"
               variant="outlined"
               :prepend-inner-icon="mdiEmailOutline"
               label="อีเมล"
@@ -39,6 +59,7 @@ const authStore = useAuthStore()
               hide-details
             ></v-text-field
             ><v-text-field
+              v-model="password"
               type="password"
               variant="outlined"
               :prepend-inner-icon="mdiLockOutline"
@@ -47,6 +68,7 @@ const authStore = useAuthStore()
               hide-details
             ></v-text-field
             ><v-text-field
+              v-model="firstname"
               variant="outlined"
               :prepend-inner-icon="mdiAccountOutline"
               label="ชื่อ"
@@ -54,6 +76,7 @@ const authStore = useAuthStore()
               hide-details
             ></v-text-field
             ><v-text-field
+              v-model="lastname"
               variant="outlined"
               :prepend-inner-icon="mdiAccountOutline"
               label="นามสกุล"
@@ -69,6 +92,7 @@ const authStore = useAuthStore()
               "
               :height="50"
               class="mb-7"
+              @click="addCustomer()"
               >สมัครสมาชิก</v-btn
             ><v-divider :thickness="1" class="border-opacity-100 mb-7"></v-divider
             ><v-btn

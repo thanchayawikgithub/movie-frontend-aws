@@ -217,7 +217,7 @@ const days = [
         </v-col>
       </v-row>
     </v-card>
-    <v-stepper alt-labels class="mt-5" v-model="step" :height="1100"
+    <v-stepper alt-labels class="mt-5" v-model="step" :height="1150"
       ><v-stepper-header
         ><v-stepper-item title="เลือกรอบฉาย" :value="1" color="red"></v-stepper-item
         ><v-divider></v-divider>
@@ -589,11 +589,11 @@ const days = [
             variant="outlined"
             class="pa-10"
             ><v-card-title
-              style="text-align: center; font-size: 30px; font-weight: bold"
+              style="text-align: center; font-size: 28px; font-weight: bold"
               class="mb-4"
-              >ยืนยันการซื้อ</v-card-title
+              >ยืนยันการซื้อตั๋วรับชมภาพยนตร์</v-card-title
             >
-            <v-row
+            <v-row class="mt-3"
               ><v-col align="center"
                 ><v-img
                   :src="`http://localhost:3000/movies/${movie?.movieId}/image`"
@@ -639,11 +639,14 @@ const days = [
             ><v-row class="mt-3"
               ><v-col
                 ><v-btn
-                  style="width: 100%"
+                  style="width: 100%; border-width: 2px"
                   :height="200"
                   stacked
-                  elevation="1"
+                  variant="outlined"
                   @click="receipt.recPaymentMethod = 'credit card'"
+                  :style="{
+                    borderColor: receipt.recPaymentMethod === 'credit card' ? 'red' : 'black'
+                  }"
                   ><v-icon
                     size="100"
                     :color="receipt.recPaymentMethod === 'credit card' ? 'red' : 'black'"
@@ -658,11 +661,14 @@ const days = [
                 ></v-col
               ><v-col>
                 <v-btn
-                  style="width: 100%"
+                  style="width: 100%; border-width: 2px"
                   :height="200"
                   stacked
-                  elevation="1"
+                  variant="outlined"
                   @click="receipt.recPaymentMethod = 'qr-payment'"
+                  :style="{
+                    borderColor: receipt.recPaymentMethod === 'qr-payment' ? 'red' : 'black'
+                  }"
                   ><v-icon
                     size="100"
                     :color="receipt.recPaymentMethod === 'qr-payment' ? 'red' : 'black'"
