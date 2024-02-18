@@ -117,6 +117,7 @@ const formatShowDate = (dateTime: Date | undefined): string => {
 
   return formattedDate
 }
+
 onMounted(async () => {
   movie.value = await movieStore.getMovie(movieId)
   console.log(movie.value)
@@ -479,7 +480,13 @@ const days = [
                   </p>
                   <v-row>
                     <v-col cols="12">
-                      <v-btn :height="250" :width="220" class="mt-5 pt-2 mr-10">
+                      <v-btn
+                        v-for="food in foods"
+                        :key="food.foodId"
+                        :height="250"
+                        :width="220"
+                        class="mt-5 pt-2 mr-10"
+                      >
                         <v-card
                           variant="flat"
                           :height="220"
@@ -488,11 +495,13 @@ const days = [
                           ><v-img
                             class="image mb-2"
                             style="height: 15vh; width: 20vw"
-                            :src="`http://localhost:3000/movies/${movie?.movieId}/image`"
+                            :src="`http://localhost:3000/foods/${food.foodId}/image`"
                           >
                           </v-img>
-                          <p style="font-size: 15px; text-align: center">น้ำอัดลม 45 Oz.</p>
-                          <p style="font-size: 20px; text-align: center" class="mt-3">20 ฿</p>
+                          <p style="font-size: 15px; text-align: center">{{ food.foodName }}</p>
+                          <p style="font-size: 20px; text-align: center" class="mt-3">
+                            {{ food.foodPrice }}฿
+                          </p>
                         </v-card></v-btn
                       ></v-col
                     >
@@ -512,7 +521,7 @@ const days = [
                     >
                   </v-row>
                   <v-row>
-                    <v-col class="ml-9" style="font-size: 20px" cols="4">น้ำอัดลม 45 Oz. </v-col>
+                    <v-col class="ml-9" style="font-size: 20px" cols="4">น้ำอัดลม 45 Oz.</v-col>
                     <v-col style="font-size: 20px" cols="3">
                       <v-btn
                         style="background-color: #f1f5f9; font-size: 17px; font-weight: bold"
