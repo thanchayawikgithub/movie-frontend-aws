@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import router from '@/router'
+import { useFoodStore } from '@/stores/food'
 import { useMovieStore } from '@/stores/movie'
+import type Food from '@/types/foods'
 import type Movie from '@/types/movie'
 import type ReceiptDto from '@/types/receiptDto'
-import type Seat from '@/types/seat'
 import type Showtime from '@/types/showtime'
 import type ShowtimeSeat from '@/types/showtime_seat'
 import type Theater from '@/types/theater'
@@ -14,13 +15,11 @@ import {
   mdiVolumeHigh,
   mdiSofaSingle,
   mdiSofa,
-  mdiCloseCircleOutline,
   mdiAccountCircleOutline,
   mdiCheckCircle,
   mdiQrcodeScan,
   mdiCreditCardOutline,
-  mdiTrashCan,
-  mdiPlus
+  mdiTrashCan
 } from '@mdi/js'
 import { computed } from 'vue'
 import { watch } from 'vue'
@@ -40,6 +39,8 @@ const step = ref(1)
 const movieStore = useMovieStore()
 const movie = ref<Movie>()
 const showtime = ref<Showtime>()
+const foodStore = useFoodStore()
+const food = ref<Food[]>([])
 const selectedShowtime = ref<number>()
 const customRowOrder = ['L', 'K', 'J', 'I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A', 'AA']
 const rows = ref<{ name: string; showtimeSeats: ShowtimeSeat[] }[]>([])
@@ -121,6 +122,8 @@ onMounted(async () => {
   console.log(movie.value)
   showtimesTheater.value = await movieStore.getShowtimesTheater(movieId)
   console.log(showtimesTheater.value)
+  // food.value = await foodStore.getFoodByCat()
+  console.log(food.value)
 })
 watch(receipt.value.tickets, (newValue) => {
   receipt.value.recTotalPrice = newValue.reduce((total, ticket) => total + ticket.seat.seatPrice, 0)
@@ -476,7 +479,7 @@ const days = [
                   </p>
                   <v-row>
                     <v-col cols="12">
-                      <v-btn :height="250" :width="220" class="mt-5 pt-2 mr-10" variant="outlined">
+                      <v-btn :height="250" :width="220" class="mt-5 pt-2 mr-10">
                         <v-card
                           variant="flat"
                           :height="220"
@@ -488,10 +491,8 @@ const days = [
                             :src="`http://localhost:3000/movies/${movie?.movieId}/image`"
                           >
                           </v-img>
-                          <p style="font-size: 20px; text-align: center">
-                            {{ showtime?.theater.theaterName }}
-                          </p>
-                          <p style="font-size: 20px; text-align: center">20 ฿</p>
+                          <p style="font-size: 15px; text-align: center">น้ำอัดลม 45 Oz.</p>
+                          <p style="font-size: 20px; text-align: center" class="mt-3">20 ฿</p>
                         </v-card></v-btn
                       ></v-col
                     >
