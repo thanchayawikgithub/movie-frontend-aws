@@ -2,6 +2,7 @@
 import router from '@/router'
 import { useMovieStore } from '@/stores/movie'
 import type Movie from '@/types/movie'
+import type ReceiptDto from '@/types/receiptDto'
 import type Seat from '@/types/seat'
 import type Showtime from '@/types/showtime'
 import type ShowtimeSeat from '@/types/showtime_seat'
@@ -15,10 +16,22 @@ import {
   mdiSofa,
   mdiCloseCircleOutline,
   mdiAccountCircleOutline,
-  mdiCheckCircle
+  mdiCheckCircle,
+  mdiQrcodeScan,
+  mdiCreditCardOutline
 } from '@mdi/js'
+import { computed } from 'vue'
 import { watch } from 'vue'
 import { onMounted, ref } from 'vue'
+
+const receipt = ref<ReceiptDto>({
+  cusId: 0,
+  showId: 0,
+  receiptFoods: [],
+  tickets: [],
+  recTotalPrice: 0,
+  recPaymentMethod: ''
+})
 
 const movieId = +router.currentRoute.value.params.movieId.toString()
 const step = ref(1)
@@ -27,7 +40,6 @@ const movie = ref<Movie>()
 const showtime = ref<Showtime>()
 const selectedShowtime = ref<number>()
 const customRowOrder = ['L', 'K', 'J', 'I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A', 'AA']
-const seats = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
 const rows = ref<{ name: string; showtimeSeats: ShowtimeSeat[] }[]>([])
 const getFormattedTime = (dateObject: Date) => {
   const hours = dateObject.getHours()
@@ -36,7 +48,7 @@ const getFormattedTime = (dateObject: Date) => {
 
   return formattedTime
 }
-const selectedSeats = ref<ShowtimeSeat[]>([])
+
 const padZero = (value: number) => {
   // Add leading zero if the value is less than 10
   return value < 10 ? `0${value}` : value
@@ -51,7 +63,7 @@ function findRow(seatNumber: string) {
 const getSeatColor = (showtimeSeat: ShowtimeSeat) => {
   if (showtimeSeat.showSeatStatus === false) {
     return 'gray'
-  } else if (selectedSeats.value.includes(showtimeSeat)) {
+  } else if (receipt.value.tickets.includes(showtimeSeat)) {
     return 'red'
   } else {
     switch (showtimeSeat.seat.seatType) {
@@ -68,7 +80,7 @@ const getSeatColor = (showtimeSeat: ShowtimeSeat) => {
 const getSeatIcon = (showtimeSeat: ShowtimeSeat) => {
   if (showtimeSeat.showSeatStatus === false) {
     return mdiAccountCircleOutline
-  } else if (selectedSeats.value.includes(showtimeSeat)) {
+  } else if (receipt.value.tickets.includes(showtimeSeat)) {
     return mdiCheckCircle
   } else {
     switch (showtimeSeat.seat.seatType) {
@@ -81,6 +93,15 @@ const getSeatIcon = (showtimeSeat: ShowtimeSeat) => {
       default:
         return mdiSofaSingle
     }
+  }
+}
+
+const selectSeat = (showtimeSeat: ShowtimeSeat) => {
+  const index = receipt.value.tickets.findIndex((seat) => seat === showtimeSeat)
+  if (index !== -1) {
+    receipt.value.tickets.splice(index, 1)
+  } else {
+    receipt.value.tickets.push(showtimeSeat)
   }
 }
 const showtimesTheater = ref<Theater[]>([])
@@ -99,10 +120,13 @@ onMounted(async () => {
   showtimesTheater.value = await movieStore.getShowtimesTheater(movieId)
   console.log(showtimesTheater.value)
 })
-
+watch(receipt.value.tickets, (newValue) => {
+  receipt.value.recTotalPrice = newValue.reduce((total, ticket) => total + ticket.seat.seatPrice, 0)
+  console.log(receipt.value.recTotalPrice)
+})
 watch(step, async () => {
   if (step.value === 2) {
-    showtime.value = await movieStore.getShowtime(selectedShowtime.value!)
+    showtime.value = await movieStore.getShowtime(receipt.value.showId)
     console.log(showtime.value)
     showtime.value?.showtimeseats.forEach((showtimeSeat) => {
       const rowName = findRow(showtimeSeat.seat.seatNumber)
@@ -130,7 +154,6 @@ watch(step, async () => {
         return numA - numB
       })
     })
-    console.log(rows.value)
   }
 })
 const model = ref(0)
@@ -178,7 +201,11 @@ const days = [
             :height="40"
             class="mt-5"
             @click="router.push({ name: 'movieDetail' })"
-            style="background: #b91c1c; color: white; font-weight: bold"
+            style="
+              background: linear-gradient(to right, #b91c1c, #fa5830);
+              color: white;
+              font-weight: bold;
+            "
             >รายละเอียดภาพยนตร์</v-btn
           >
         </v-col>
@@ -186,10 +213,13 @@ const days = [
     </v-card>
     <v-stepper alt-labels class="mt-5" v-model="step" :height="1000"
       ><v-stepper-header
-        ><v-stepper-item title="เลือกรอบฉาย" :value="1"></v-stepper-item><v-divider></v-divider>
-        <v-stepper-item title="เลือกที่นั่ง" :value="2"></v-stepper-item><v-divider></v-divider
-        ><v-stepper-item title="การชำระเงิน" :value="3"></v-stepper-item><v-divider></v-divider
-        ><v-stepper-item title="สิ้นสุด" :value="4"></v-stepper-item
+        ><v-stepper-item title="เลือกรอบฉาย" :value="1" color="red"></v-stepper-item
+        ><v-divider></v-divider>
+        <v-stepper-item title="เลือกที่นั่ง" :value="2" color="red"></v-stepper-item
+        ><v-divider></v-divider
+        ><v-stepper-item title="การชำระเงิน" :value="3" color="red"></v-stepper-item
+        ><v-divider></v-divider
+        ><v-stepper-item title="สิ้นสุด" :value="4" color="red"></v-stepper-item
       ></v-stepper-header>
       <v-stepper-window
         ><v-stepper-window-item :value="1">
@@ -250,7 +280,7 @@ const days = [
                           :key="showtime.showId"
                           class="mt-2 ml-3"
                           style="background-color: #b91c1c; color: white"
-                          @click="(selectedShowtime = showtime.showId), (step = 2)"
+                          @click="(receipt.showId = showtime.showId), (step = 2)"
                         >
                           {{ getFormattedTime(new Date(showtime.showStart)) }}</v-btn
                         >
@@ -263,7 +293,7 @@ const days = [
           </v-card>
         </v-stepper-window-item>
         <v-stepper-window-item :value="2"
-          ><v-card :height="800">
+          ><v-card :height="700">
             <v-row>
               <v-col cols="3" align="center"
                 ><v-card
@@ -294,32 +324,70 @@ const days = [
                 ><v-card
                   :height="630"
                   :width="450"
-                  class="mt-5 ml-5"
-                  style="position: absolute; background-color: #b91c1c"
+                  class="mt-5 ml-5 pa-5"
+                  style="position: absolute; background-color: #f1f5f9"
+                  elevation="0"
                   ><v-row>
-                    <v-col style="font-size: 22px" class="ml-5 mt-5">{{ movie?.movieName }}</v-col>
+                    <v-col style="font-size: 22px">{{ 'ภาพยนตร์ : ' + movie?.movieName }}</v-col>
                   </v-row>
                   <v-row>
-                    <v-col style="font-size: 20px" class="ml-5 mt-1 pb-0"
-                      >{{ formatShowDate(showtime?.showStart) }}
+                    <v-col style="font-size: 20px"
+                      >{{ 'รอบฉาย : ' + formatShowDate(showtime?.showStart) }}
+                      {{
+                        showtime && showtime.showStart
+                          ? getFormattedTime(new Date(showtime.showStart)) + ' น.'
+                          : ''
+                      }}
                     </v-col>
                   </v-row>
+
                   <v-row>
-                    <v-col style="font-size: 20px" class="ml-5 pt-0"
-                      >{{ getFormattedTime(new Date(showtime?.showStart)) }}
+                    <v-col style="font-size: 22px"
+                      >{{ 'โรงภาพยนตร์ : ' + showtime?.theater.theaterName }}
                     </v-col>
                   </v-row>
-                  <v-row>
-                    <v-col style="font-size: 22px" class="ml-5 mt-1 pb-0"
-                      >{{ showtime?.theater.theaterName }}
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col style="font-size: 20px" class="ml-5 pt-0">สกาลาบางแสน </v-col>
-                  </v-row>
+
                   <v-row>
                     <v-col align="center" class="mt-9"
-                      ><v-card :width="300" :height="300">ssss</v-card></v-col
+                      ><v-card
+                        :width="360"
+                        :height="380"
+                        class="d-flex flex-column pa-5"
+                        elevation="0"
+                        ><h3>ที่นั่งที่เลือก</h3>
+                        <h3 class="mt-3" style="color: #f84802">
+                          {{
+                            receipt.tickets
+                              .map((showtimeSeat) => showtimeSeat.seat.seatNumber)
+                              .join(',') || '-'
+                          }}
+                        </h3>
+                        <h3 class="mt-4">ราคารวม</h3>
+                        <h3 class="mt-4" style="color: #f84802">{{ receipt.recTotalPrice }}</h3>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                          rounded="lg"
+                          class="mb-2"
+                          elevation="0"
+                          size="large"
+                          style="
+                            background: linear-gradient(to right, #b91c1c, #fa5830);
+                            color: white;
+                          "
+                          >ซื้ออาหาร / เครื่องดื่ม</v-btn
+                        >
+                        <v-btn
+                          rounded="lg"
+                          elevation="0"
+                          size="large"
+                          style="
+                            background: linear-gradient(to right, #b91c1c, #fa5830);
+                            color: white;
+                          "
+                          @click="step = 3"
+                          >ชำระเงิน</v-btn
+                        ></v-card
+                      ></v-col
                     >
                   </v-row>
                 </v-card></v-col
@@ -347,13 +415,93 @@ const days = [
                 :key="showtimeSeat.seat.seatId"
                 size="xx-large"
                 class="ml-3"
-                @click="selectedSeats.push(showtimeSeat)"
+                @click="selectSeat(showtimeSeat)"
                 :color="getSeatColor(showtimeSeat)"
                 >{{ getSeatIcon(showtimeSeat) }}</v-icon
               >
             </v-row>
           </v-card></v-stepper-window-item
-        ><v-stepper-window-item :value="3">3</v-stepper-window-item
+        ><v-stepper-window-item :value="3"
+          ><v-card
+            style="margin-inline: 50vh; border-color: #b91c1c; border-width: 3px"
+            rounded="lg"
+            variant="outlined"
+            class="pa-10"
+            ><v-card-title style="text-align: center">ยืนยันการซื้อ</v-card-title>
+            <v-row
+              ><v-col align="center"
+                ><v-img
+                  :src="`http://localhost:3000/movies/${movie?.movieId}/image`"
+                  :width="200"
+                ></v-img></v-col
+              ><v-col
+                ><h3>ภาพยนตร์ : {{ movie?.movieName }}</h3>
+                <p>
+                  รอบฉาย : {{ formatShowDate(showtime?.showStart) }}
+                  {{
+                    showtime && showtime.showStart
+                      ? getFormattedTime(new Date(showtime.showStart)) + ' น.'
+                      : ''
+                  }}
+                </p>
+                <p>
+                  ทั้งนั่ง :
+                  {{
+                    receipt.tickets.map((showtimeSeat) => showtimeSeat.seat.seatNumber).join(',') ||
+                    '-'
+                  }}
+                </p>
+                <!-- <p>ราคารวม : {{ receipt.recTotalPrice + ' บาท' }}</p> -->
+              </v-col></v-row
+            >
+            <v-card-title
+              style="
+                text-align: center;
+                background: linear-gradient(to right, #b91c1c, #fa5830);
+                color: white;
+                border-radius: 8px;
+              "
+              class="mt-10"
+              >ราคารวม : {{ receipt.recTotalPrice + ' บาท' }}</v-card-title
+            >
+            <v-card-title style="text-align: center">เลือกวิธีการชำระเงิน</v-card-title
+            ><v-row class="mt-3"
+              ><v-col
+                ><v-btn
+                  style="width: 100%"
+                  :height="200"
+                  stacked
+                  elevation="1"
+                  @click="receipt.recPaymentMethod = 'credit card'"
+                  ><v-icon size="100">{{ mdiCreditCardOutline }}</v-icon>
+                  <h3 class="mt-3">บัตรเครดิต / บัตรเดบิต</h3></v-btn
+                ></v-col
+              ><v-col>
+                <v-btn
+                  style="width: 100%"
+                  :height="200"
+                  stacked
+                  elevation="1"
+                  @click="receipt.recPaymentMethod = 'qr-payment'"
+                  ><v-icon size="100">{{ mdiQrcodeScan }}</v-icon>
+                  <h3 class="mt-3">QR-Payment</h3></v-btn
+                >
+              </v-col></v-row
+            ><v-btn
+              rounded="lg"
+              elevation="0"
+              class="mt-5"
+              style="
+                background: linear-gradient(to right, #b91c1c, #fa5830);
+                color: white;
+                width: 100%;
+                height: 5vh;
+                font-size: 18px;
+              "
+              @click="step = 3"
+              >ชำระเงิน</v-btn
+            ></v-card
+          ></v-stepper-window-item
         ><v-stepper-window-item :value="4">4</v-stepper-window-item>
       </v-stepper-window>
     </v-stepper>
