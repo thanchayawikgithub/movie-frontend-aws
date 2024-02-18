@@ -18,7 +18,9 @@ import {
   mdiAccountCircleOutline,
   mdiCheckCircle,
   mdiQrcodeScan,
-  mdiCreditCardOutline
+  mdiCreditCardOutline,
+  mdiTrashCan,
+  mdiPlus
 } from '@mdi/js'
 import { computed } from 'vue'
 import { watch } from 'vue'
@@ -217,9 +219,11 @@ const days = [
         ><v-divider></v-divider>
         <v-stepper-item title="เลือกที่นั่ง" :value="2" color="red"></v-stepper-item
         ><v-divider></v-divider
-        ><v-stepper-item title="การชำระเงิน" :value="3" color="red"></v-stepper-item
+        ><v-stepper-item title="เลือกอาหาร / เครื่องดื่ม" :value="3" color="red"></v-stepper-item
         ><v-divider></v-divider
-        ><v-stepper-item title="สิ้นสุด" :value="4" color="red"></v-stepper-item
+        ><v-stepper-item title="การชำระเงิน" :value="4" color="red"></v-stepper-item
+        ><v-divider></v-divider
+        ><v-stepper-item title="สิ้นสุด" :value="5" color="red"></v-stepper-item
       ></v-stepper-header>
       <v-stepper-window
         ><v-stepper-window-item :value="1">
@@ -440,6 +444,7 @@ const days = [
                             background: linear-gradient(to right, #b91c1c, #fa5830);
                             color: white;
                           "
+                          @click="step = 3"
                           >ซื้ออาหาร / เครื่องดื่ม</v-btn
                         >
                         <v-btn
@@ -450,7 +455,7 @@ const days = [
                             background: linear-gradient(to right, #b91c1c, #fa5830);
                             color: white;
                           "
-                          @click="step = 3"
+                          @click="step = 4"
                           >ชำระเงิน</v-btn
                         ></v-card
                       ></v-col
@@ -460,7 +465,114 @@ const days = [
               >
             </v-row>
           </v-card></v-stepper-window-item
-        ><v-stepper-window-item :value="3"
+        >
+        <v-stepper-window-item :value="3">
+          <v-card :height="700">
+            <v-row>
+              <v-col cols="7">
+                <v-card variant="flat" :height="700">
+                  <p style="font-size: 30px; font-weight: bold; text-align: center; color: #b91c1c">
+                    อาหารและเครื่องดื่ม
+                  </p>
+                  <v-row>
+                    <v-col cols="12">
+                      <v-btn :height="250" :width="220" class="mt-5 pt-2 mr-10" variant="outlined">
+                        <v-card
+                          variant="flat"
+                          :height="220"
+                          :width="210"
+                          style="font-size: 13px; font-weight: bold; text-align: center"
+                          ><v-img
+                            class="image mb-2"
+                            style="height: 15vh; width: 20vw"
+                            :src="`http://localhost:3000/movies/${movie?.movieId}/image`"
+                          >
+                          </v-img>
+                          <p style="font-size: 20px; text-align: center">
+                            {{ showtime?.theater.theaterName }}
+                          </p>
+                          <p style="font-size: 20px; text-align: center">20 ฿</p>
+                        </v-card></v-btn
+                      ></v-col
+                    >
+                  </v-row>
+                </v-card>
+              </v-col>
+              <v-col
+                ><v-card
+                  :height="630"
+                  :width="530"
+                  class="mt-5 ml-5 pa-5"
+                  style="background-color: #f1f5f9"
+                  elevation="0"
+                  ><v-row>
+                    <v-col style="font-size: 22px; font-weight: bold; text-align: center"
+                      >รายการ</v-col
+                    >
+                  </v-row>
+                  <v-row>
+                    <v-col class="ml-9" style="font-size: 20px" cols="4">น้ำอัดลม 45 Oz. </v-col>
+                    <v-col style="font-size: 20px" cols="3">
+                      <v-btn
+                        style="background-color: #f1f5f9; font-size: 17px; font-weight: bold"
+                        density="compact"
+                        icon=""
+                        variant="plain"
+                        >-</v-btn
+                      >
+                      1
+                      <v-btn
+                        style="background-color: #f1f5f9; font-size: 17px; font-weight: bold"
+                        density="compact"
+                        icon=""
+                        variant="plain"
+                        >+</v-btn
+                      ></v-col
+                    >
+                    <v-col style="font-size: 20px" cols="2">50 ฿</v-col>
+                    <v-col style="font-size: 20px"
+                      ><v-btn
+                        variant="plain"
+                        style="background-color: #f1f5f9"
+                        density="compact"
+                        icon=""
+                        ><v-icon size="25px" color="red">{{ mdiTrashCan }}</v-icon></v-btn
+                      ></v-col
+                    >
+                  </v-row>
+
+                  <v-row>
+                    <v-col align="center" class="mt-9"
+                      ><v-card
+                        :width="360"
+                        :height="380"
+                        class="d-flex flex-column pa-5"
+                        elevation="0"
+                      >
+                        <h3 class="mt-4">ราคารวม</h3>
+                        <h3 class="mt-4" style="color: #f84802">{{ 0 }}</h3>
+                        <v-spacer></v-spacer>
+
+                        <v-btn
+                          rounded="lg"
+                          elevation="0"
+                          size="large"
+                          style="
+                            background: linear-gradient(to right, #b91c1c, #fa5830);
+                            color: white;
+                          "
+                          @click="step = 4"
+                          >ชำระเงิน</v-btn
+                        ></v-card
+                      ></v-col
+                    >
+                  </v-row>
+                </v-card></v-col
+              >
+            </v-row>
+          </v-card></v-stepper-window-item
+        >
+        <v-stepper-window-item :value="4"
           ><v-card
             style="margin-inline: 50vh; border-color: #b91c1c; border-width: 3px"
             rounded="lg"
@@ -565,11 +677,11 @@ const days = [
                 height: 5vh;
                 font-size: 18px;
               "
-              @click="step = 3"
+              @click="step = 4"
               >ชำระเงิน</v-btn
             ></v-card
           ></v-stepper-window-item
-        ><v-stepper-window-item :value="4">4</v-stepper-window-item>
+        ><v-stepper-window-item :value="5">4</v-stepper-window-item>
       </v-stepper-window>
     </v-stepper>
   </v-container>
