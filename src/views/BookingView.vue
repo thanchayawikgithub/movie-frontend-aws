@@ -211,7 +211,7 @@ const days = [
         </v-col>
       </v-row>
     </v-card>
-    <v-stepper alt-labels class="mt-5" v-model="step" :height="1000"
+    <v-stepper alt-labels class="mt-5" v-model="step" :height="1100"
       ><v-stepper-header
         ><v-stepper-item title="เลือกรอบฉาย" :value="1" color="red"></v-stepper-item
         ><v-divider></v-divider>
@@ -292,8 +292,8 @@ const days = [
             </v-expand-transition>
           </v-card>
         </v-stepper-window-item>
-        <v-stepper-window-item :value="2"
-          ><v-card :height="700">
+        <v-stepper-window-item :value="2">
+          <v-card :height="700">
             <v-row>
               <v-col cols="3" align="center"
                 ><v-card
@@ -328,21 +328,26 @@ const days = [
                   style="position: absolute; background-color: #f1f5f9"
                   elevation="0"
                   ><v-row>
-                    <v-col style="font-size: 22px">{{ 'ภาพยนตร์ : ' + movie?.movieName }}</v-col>
+                    <v-col style="font-size: 22px; font-weight: bold">{{
+                      'ภาพยนตร์ : ' + movie?.movieName
+                    }}</v-col>
                   </v-row>
                   <v-row>
                     <v-col style="font-size: 20px"
-                      >{{ 'รอบฉาย : ' + formatShowDate(showtime?.showStart) }}
-                      {{
-                        showtime && showtime.showStart
-                          ? getFormattedTime(new Date(showtime.showStart)) + ' น.'
-                          : ''
-                      }}
+                      >รอบฉาย :
+                      <span style="color: #b91c1c"
+                        >{{ formatShowDate(showtime?.showStart) }}
+                        {{
+                          showtime && showtime.showStart
+                            ? getFormattedTime(new Date(showtime.showStart)) + ' น.'
+                            : ''
+                        }}</span
+                      >
                     </v-col>
                   </v-row>
 
                   <v-row>
-                    <v-col style="font-size: 22px"
+                    <v-col style="font-size: 20px"
                       >{{ 'โรงภาพยนตร์ : ' + showtime?.theater.theaterName }}
                     </v-col>
                   </v-row>
@@ -397,7 +402,7 @@ const days = [
               ><v-col style="text-align: center" cols="8"
                 ><v-card
                   rounded="0"
-                  :width="750"
+                  :width="690"
                   :height="50"
                   variant="outlined"
                   style="color: #b91c1c"
@@ -408,8 +413,21 @@ const days = [
               v-for="(row, index) in rows"
               :key="index"
               class="mt-3 ml-5 justify-center"
-              style="font-size: 15px; font-weight: bold; padding-right: 550px"
-              ><p class="mt-2">{{ row.name }}</p>
+              :style="{
+                'font-size': '15px',
+                'font-weight': 'bold',
+                'padding-right': index === 12 ? '540px' : '550px'
+              }"
+            >
+              <p
+                class="mt-2"
+                :style="{
+                  'margin-right': index === 12 ? '19px' : '0px',
+                  'padding-left': index === 12 ? '25px' : '0px'
+                }"
+              >
+                {{ row.name }}
+              </p>
               <v-icon
                 v-for="showtimeSeat in row.showtimeSeats"
                 :key="showtimeSeat.seat.seatId"
@@ -417,8 +435,19 @@ const days = [
                 class="ml-3"
                 @click="selectSeat(showtimeSeat)"
                 :color="getSeatColor(showtimeSeat)"
-                >{{ getSeatIcon(showtimeSeat) }}</v-icon
+                :style="{ 'margin-right': index === 12 ? '12px' : '0' }"
+                >{{ getSeatIcon(showtimeSeat) }}
+              </v-icon>
+              <p
+                class="mt-2"
+                :style="{
+                  'margin-right': index === 12 ? '33px' : '0px',
+                  'margin-left': index === 12 ? '0px' : '12px',
+                  'padding-left': index === 12 ? '15px' : '0px'
+                }"
               >
+                {{ row.name }}
+              </p>
             </v-row>
           </v-card></v-stepper-window-item
         ><v-stepper-window-item :value="3"
@@ -427,29 +456,40 @@ const days = [
             rounded="lg"
             variant="outlined"
             class="pa-10"
-            ><v-card-title style="text-align: center">ยืนยันการซื้อ</v-card-title>
+            ><v-card-title
+              style="text-align: center; font-size: 30px; font-weight: bold"
+              class="mb-4"
+              >ยืนยันการซื้อ</v-card-title
+            >
             <v-row
               ><v-col align="center"
                 ><v-img
                   :src="`http://localhost:3000/movies/${movie?.movieId}/image`"
-                  :width="200"
+                  :width="250"
                 ></v-img></v-col
               ><v-col
-                ><h3>ภาพยนตร์ : {{ movie?.movieName }}</h3>
-                <p>
-                  รอบฉาย : {{ formatShowDate(showtime?.showStart) }}
-                  {{
-                    showtime && showtime.showStart
-                      ? getFormattedTime(new Date(showtime.showStart)) + ' น.'
-                      : ''
-                  }}
+                ><h3 style="font-size: 22px">ภาพยนตร์ : {{ movie?.movieName }}</h3>
+                <p class="mt-3">
+                  รอบฉาย :
+                  <span style="color: #b91c1c"
+                    >{{ formatShowDate(showtime?.showStart) }}
+                    {{
+                      showtime && showtime.showStart
+                        ? getFormattedTime(new Date(showtime.showStart)) + ' น.'
+                        : ''
+                    }}
+                  </span>
                 </p>
-                <p>
+                <p class="mt-3">
                   ทั้งนั่ง :
-                  {{
+                  <span style="color: #b91c1c">{{
                     receipt.tickets.map((showtimeSeat) => showtimeSeat.seat.seatNumber).join(',') ||
                     '-'
-                  }}
+                  }}</span>
+                </p>
+                <p class="mt-3">
+                  โรงภาพยนตร์ :
+                  {{ showtime?.theater.theaterName }}
                 </p>
               </v-col></v-row
             >
