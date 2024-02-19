@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import router from '@/router'
+import { useAuthStore } from '@/stores/auth'
 import { useFoodStore } from '@/stores/food'
 import { useMovieStore } from '@/stores/movie'
+import { useReceiptStore } from '@/stores/receipt'
 import type Food from '@/types/foods'
 import type Movie from '@/types/movie'
 import type ReceiptDto from '@/types/receiptDto'
@@ -24,7 +26,8 @@ import {
 import { computed } from 'vue'
 import { watch } from 'vue'
 import { onMounted, ref } from 'vue'
-
+const authStore = useAuthStore()
+const receiptStore = useReceiptStore()
 const receipt = ref<ReceiptDto>({
   cusId: 0,
   showId: 0,
@@ -33,6 +36,18 @@ const receipt = ref<ReceiptDto>({
   recTotalPrice: 0,
   recPaymentMethod: ''
 })
+
+const saveReceipt = async () => {
+  if (authStore.isLoggedIn()) {
+    const customer = await authStore.getCurrentUser()
+    receipt.value.cusId = customer.cusId || 0
+    const savedReceipt = await receiptStore.saveReceipt(receipt.value)
+    console.log(savedReceipt)
+    step.value = 5
+  } else {
+    authStore.showLoginDialog == true
+  }
+}
 
 const movieId = +router.currentRoute.value.params.movieId.toString()
 const step = ref(1)
@@ -100,6 +115,7 @@ const getSeatIcon = (showtimeSeat: ShowtimeSeat) => {
 }
 
 const selectSeat = (showtimeSeat: ShowtimeSeat) => {
+  if (showtimeSeat.showSeatStatus === false) return
   const index = receipt.value.tickets.findIndex((seat) => seat === showtimeSeat)
   if (index !== -1) {
     receipt.value.tickets.splice(index, 1)
@@ -661,6 +677,10 @@ const days = [
                   </span>
                 </p>
                 <p class="mt-3">
+                  โรงภาพยนตร์ :
+                  {{ showtime?.theater.theaterName }}
+                </p>
+                <p class="mt-3">
                   ทั้งนั่ง :
                   <span style="color: #b91c1c">{{
                     receipt.tickets.map((showtimeSeat) => showtimeSeat.seat.seatNumber).join(',') ||
@@ -668,10 +688,12 @@ const days = [
                   }}</span>
                 </p>
                 <p class="mt-3">
-                  โรงภาพยนตร์ :
-                  {{ showtime?.theater.theaterName }}
+                  อาหาร / เครื่องดื่ม : {{ receipt.receiptFoods.length > 0 ? '' : '-' }}
                 </p>
-              </v-col></v-row
+                <p v-for="(recFood, index) in receipt.receiptFoods" :key="index" class="mt-3">
+                  {{ recFood.food.foodName + ' x ' + recFood.recFoodQty }}
+                </p></v-col
+              ></v-row
             >
             <v-card-title
               style="
@@ -741,11 +763,21 @@ const days = [
                 height: 5vh;
                 font-size: 18px;
               "
-              @click="step = 4"
+              @click="saveReceipt()"
               >ชำระเงิน</v-btn
             ></v-card
           ></v-stepper-window-item
-        ><v-stepper-window-item :value="5">4</v-stepper-window-item>
+        ><v-stepper-window-item :value="5"
+          ><v-card color="#fa5830" :height="300"
+            ><v-row
+              ><v-col align="center"
+                ><v-icon size="150">{{ mdiCheckCircle }}</v-icon></v-col
+              ><v-col align="center"
+                ><v-card-title style="font-size: 40px">ชำระเงินสำเร็จ</v-card-title></v-col
+              ></v-row
+            ></v-card
+          ></v-stepper-window-item
+        >
       </v-stepper-window>
     </v-stepper>
   </v-container>
