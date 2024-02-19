@@ -573,57 +573,59 @@ const days = [
               </v-col>
               <v-col
                 ><v-card
-                  :height="630"
-                  :width="530"
+                  :height="750"
+                  :width="550"
                   class="mt-5 ml-5 pa-5"
                   style="background-color: #f1f5f9"
                   elevation="0"
-                  ><v-row>
+                  ><v-row class="mb-2">
                     <v-col style="font-size: 22px; font-weight: bold; text-align: center"
                       >รายการ</v-col
                     >
                   </v-row>
-                  <v-row v-for="(recFood, index) in receipt.receiptFoods" :key="index">
-                    <v-col class="ml-9" style="font-size: 20px" cols="4">{{
-                      recFood.food.foodName
-                    }}</v-col>
-                    <v-col style="font-size: 20px" cols="3">
-                      <v-btn
-                        style="background-color: #f1f5f9; font-size: 17px; font-weight: bold"
-                        density="compact"
-                        icon=""
-                        @click="decreaseQty(index)"
-                        variant="plain"
-                        >-</v-btn
+                  <v-card :height="250" variant="flat" style="background-color: #f1f5f9">
+                    <v-row v-for="(recFood, index) in receipt.receiptFoods" :key="index">
+                      <v-col class="ml-9" style="font-size: 18px" cols="4">{{
+                        recFood.food.foodName
+                      }}</v-col>
+                      <v-col style="font-size: 18px" cols="3">
+                        <v-btn
+                          style="background-color: #f1f5f9; font-size: 17px; font-weight: bold"
+                          density="compact"
+                          icon=""
+                          @click="decreaseQty(index)"
+                          variant="plain"
+                          >-</v-btn
+                        >
+                        {{ recFood.recFoodQty }}
+                        <v-btn
+                          style="background-color: #f1f5f9; font-size: 17px; font-weight: bold"
+                          density="compact"
+                          icon=""
+                          variant="plain"
+                          @click="increaseQty(index)"
+                          >+</v-btn
+                        ></v-col
                       >
-                      {{ recFood.recFoodQty }}
-                      <v-btn
-                        style="background-color: #f1f5f9; font-size: 17px; font-weight: bold"
-                        density="compact"
-                        icon=""
-                        variant="plain"
-                        @click="increaseQty(index)"
-                        >+</v-btn
-                      ></v-col
-                    >
-                    <v-col style="font-size: 20px" cols="2">{{ recFood.recFoodPrice }}</v-col>
-                    <v-col style="font-size: 20px"
-                      ><v-btn
-                        variant="plain"
-                        style="background-color: #f1f5f9"
-                        density="compact"
-                        @click="deleteRecFood(index)"
-                        icon=""
-                        ><v-icon size="25px" color="red">{{ mdiTrashCan }}</v-icon></v-btn
-                      ></v-col
-                    >
-                  </v-row>
+                      <v-col style="font-size: 18px" cols="2">{{ recFood.recFoodPrice }}</v-col>
+                      <v-col style="font-size: 18px" cols="2"
+                        ><v-btn
+                          variant="plain"
+                          style="background-color: #f1f5f9"
+                          density="compact"
+                          @click="deleteRecFood(index)"
+                          icon=""
+                          ><v-icon size="22px" color="red">{{ mdiTrashCan }}</v-icon></v-btn
+                        ></v-col
+                      >
+                    </v-row>
+                  </v-card>
 
-                  <v-row>
-                    <v-col align="center" class="mt-9"
+                  <v-row class="mt-2">
+                    <v-col align="center"
                       ><v-card
                         :width="360"
-                        :height="380"
+                        :height="300"
                         class="d-flex flex-column pa-5"
                         elevation="0"
                       >
@@ -773,13 +775,12 @@ const days = [
           ></v-stepper-window-item
         ><v-stepper-window-item :value="5"
           ><v-card color="#fa5830" :height="300"
-            ><v-row
-              ><v-col align="center"
-                ><v-icon size="150">{{ mdiCheckCircle }}</v-icon></v-col
-              ><v-col align="center"
-                ><v-card-title style="font-size: 40px">ชำระเงินสำเร็จ</v-card-title></v-col
-              ></v-row
-            ></v-card
+            ><v-row>
+              <v-col align="center" class="mt-10">
+                <v-icon size="150">{{ mdiCheckCircle }}</v-icon>
+                <p style="font-size: 40px">ชำระเงินสำเร็จ</p>
+              </v-col>
+            </v-row></v-card
           ></v-stepper-window-item
         >
       </v-stepper-window>
