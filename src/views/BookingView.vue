@@ -38,15 +38,11 @@ const receipt = ref<ReceiptDto>({
 })
 
 const saveReceipt = async () => {
-  if (authStore.isLoggedIn()) {
-    const customer = await authStore.getCurrentUser()
-    receipt.value.cusId = customer.cusId || 0
-    const savedReceipt = await receiptStore.saveReceipt(receipt.value)
-    console.log(savedReceipt)
-    step.value = 5
-  } else {
-    authStore.showLoginDialog == true
-  }
+  const customer = await authStore.getCurrentUser()
+  receipt.value.cusId = customer.cusId || 0
+  const savedReceipt = await receiptStore.saveReceipt(receipt.value)
+  console.log(savedReceipt)
+  step.value = 5
 }
 
 const movieId = +router.currentRoute.value.params.movieId.toString()
@@ -165,6 +161,14 @@ const formatShowDate = (dateTime: Date | undefined): string => {
   const formattedDate = dateObject.toLocaleDateString('th-TH', options)
 
   return formattedDate
+}
+
+const toPaymentStep = () => {
+  if (authStore.isLoggedIn()) {
+    step.value = 4
+  } else {
+    authStore.showLoginDialog = true
+  }
 }
 
 onMounted(async () => {
@@ -517,7 +521,7 @@ const days = [
                             background: linear-gradient(to right, #b91c1c, #fa5830);
                             color: white;
                           "
-                          @click="step = 4"
+                          @click="toPaymentStep()"
                           >ชำระเงิน</v-btn
                         ></v-card
                       ></v-col
@@ -635,7 +639,7 @@ const days = [
                             background: linear-gradient(to right, #b91c1c, #fa5830);
                             color: white;
                           "
-                          @click="step = 4"
+                          @click="toPaymentStep()"
                           >ชำระเงิน</v-btn
                         ></v-card
                       ></v-col
