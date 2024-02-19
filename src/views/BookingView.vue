@@ -107,6 +107,39 @@ const selectSeat = (showtimeSeat: ShowtimeSeat) => {
     receipt.value.tickets.push(showtimeSeat)
   }
 }
+
+const deleteRecFood = (index: number) => {
+  if (index !== -1) {
+    receipt.value.receiptFoods.splice(index, 1)
+  }
+}
+
+const selectFood = (food: Food) => {
+  const foodIndex = receipt.value.receiptFoods.findIndex((recFood) => recFood.food === food)
+
+  if (foodIndex !== -1) {
+    receipt.value.receiptFoods[foodIndex].recFoodQty++
+  } else {
+    receipt.value.receiptFoods.push({
+      food: food,
+      recFoodQty: 1,
+      recFoodPrice: food.foodPrice
+    })
+  }
+}
+
+const decreaseQty = (index: number) => {
+  if (receipt.value.receiptFoods[index].recFoodQty > 1) {
+    receipt.value.receiptFoods[index].recFoodQty--
+  } else {
+    receipt.value.receiptFoods.splice(index, 1)
+  }
+}
+
+const increaseQty = (index: number) => {
+  receipt.value.receiptFoods[index].recFoodQty++
+}
+
 const showtimesTheater = ref<Theater[]>([])
 
 const formatShowDate = (dateTime: Date | undefined): string => {
@@ -126,8 +159,17 @@ onMounted(async () => {
 })
 watch(receipt.value.tickets, (newValue) => {
   receipt.value.recTotalPrice = newValue.reduce((total, ticket) => total + ticket.seat.seatPrice, 0)
-  console.log(receipt.value.recTotalPrice)
 })
+
+watch(receipt.value.receiptFoods, () => {
+  receipt.value.receiptFoods.forEach(
+    (recFood) => (recFood.recFoodPrice = recFood.food.foodPrice * recFood.recFoodQty)
+  )
+  receipt.value.recTotalPrice =
+    receipt.value.tickets.reduce((total, ticket) => total + ticket.seat.seatPrice, 0) +
+    receipt.value.receiptFoods.reduce((total, recFood) => total + recFood.recFoodPrice, 0)
+})
+
 watch(step, async () => {
   if (step.value === 2) {
     showtime.value = await movieStore.getShowtime(receipt.value.showId)
@@ -492,6 +534,7 @@ const days = [
                           :height="220"
                           :width="210"
                           style="font-size: 13px; font-weight: bold; text-align: center"
+                          @click="selectFood(food)"
                           ><v-img
                             class="image mb-2"
                             style="height: 15vh; width: 20vw"
@@ -520,31 +563,36 @@ const days = [
                       >รายการ</v-col
                     >
                   </v-row>
-                  <v-row>
-                    <v-col class="ml-9" style="font-size: 20px" cols="4">น้ำอัดลม 45 Oz.</v-col>
+                  <v-row v-for="(recFood, index) in receipt.receiptFoods" :key="index">
+                    <v-col class="ml-9" style="font-size: 20px" cols="4">{{
+                      recFood.food.foodName
+                    }}</v-col>
                     <v-col style="font-size: 20px" cols="3">
                       <v-btn
                         style="background-color: #f1f5f9; font-size: 17px; font-weight: bold"
                         density="compact"
                         icon=""
+                        @click="decreaseQty(index)"
                         variant="plain"
                         >-</v-btn
                       >
-                      1
+                      {{ recFood.recFoodQty }}
                       <v-btn
                         style="background-color: #f1f5f9; font-size: 17px; font-weight: bold"
                         density="compact"
                         icon=""
                         variant="plain"
+                        @click="increaseQty(index)"
                         >+</v-btn
                       ></v-col
                     >
-                    <v-col style="font-size: 20px" cols="2">50 ฿</v-col>
+                    <v-col style="font-size: 20px" cols="2">{{ recFood.recFoodPrice }}</v-col>
                     <v-col style="font-size: 20px"
                       ><v-btn
                         variant="plain"
                         style="background-color: #f1f5f9"
                         density="compact"
+                        @click="deleteRecFood(index)"
                         icon=""
                         ><v-icon size="25px" color="red">{{ mdiTrashCan }}</v-icon></v-btn
                       ></v-col
@@ -560,7 +608,7 @@ const days = [
                         elevation="0"
                       >
                         <h3 class="mt-4">ราคารวม</h3>
-                        <h3 class="mt-4" style="color: #f84802">{{ 0 }}</h3>
+                        <h3 class="mt-4" style="color: #f84802">{{ receipt.recTotalPrice }}</h3>
                         <v-spacer></v-spacer>
 
                         <v-btn

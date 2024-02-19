@@ -1,3 +1,4 @@
+import type Food from './foods'
 import type ShowtimeSeat from './showtime_seat'
 
 export default interface ReceiptDto {
@@ -8,7 +9,7 @@ export default interface ReceiptDto {
   tickets: ShowtimeSeat[]
 
   receiptFoods: {
-    foodId: number
+    food: Food
     recFoodQty: number
     recFoodPrice: number
   }[]
