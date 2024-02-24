@@ -21,7 +21,9 @@ import {
   mdiCheckCircle,
   mdiQrcodeScan,
   mdiCreditCardOutline,
-  mdiTrashCan
+  mdiTrashCan,
+  mdiTicketPercent,
+  mdiCancel
 } from '@mdi/js'
 import { computed } from 'vue'
 import { watch } from 'vue'
@@ -52,6 +54,7 @@ const movie = ref<Movie>()
 const showtime = ref<Showtime>()
 const foodStore = useFoodStore()
 const foods = ref<Food[]>([])
+const ticketsEmptyError = ref(false)
 const selectedShowtime = ref<number>()
 const customRowOrder = ['L', 'K', 'J', 'I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A', 'AA']
 const rows = ref<{ name: string; showtimeSeats: ShowtimeSeat[] }[]>([])
@@ -164,11 +167,41 @@ const formatShowDate = (dateTime: Date | undefined): string => {
 }
 
 const toPaymentStep = () => {
-  if (authStore.isLoggedIn()) {
-    step.value = 4
-  } else {
-    authStore.showLoginDialog = true
+  if (receipt.value.tickets.length === 0) {
+    ticketsEmptyError.value = true
+    return
   }
+  if (!authStore.isLoggedIn()) {
+    authStore.showLoginDialog = true
+    return
+  }
+  step.value = 4
+  startCountdown()
+}
+
+const countdown = ref(5) // 10 minutes countdown in seconds
+
+const timeout = ref(false)
+const paymentTimeOut = () => {
+  timeout.value = true
+}
+
+const startCountdown = () => {
+  const timer = setInterval(() => {
+    countdown.value--
+
+    if (countdown.value === 0) {
+      clearInterval(timer)
+      // Trigger whatever action you want when the countdown reaches zero
+      paymentTimeOut()
+    }
+  }, 1000)
+}
+
+const formatTime = (seconds: number) => {
+  const minutes = Math.floor(seconds / 60)
+  const remainingSeconds = seconds % 60
+  return `${padZero(minutes)}:${padZero(remainingSeconds)}`
 }
 
 onMounted(async () => {
@@ -701,78 +734,132 @@ const days = [
                 </p></v-col
               ></v-row
             >
-            <v-card-title
+            <!-- <v-card-title
               style="
                 text-align: center;
                 background: linear-gradient(to right, #b91c1c, #fa5830);
+                height: 8vh;
+                font-size: 24px;
                 color: white;
+
                 border-radius: 8px;
               "
               class="mt-10"
-              >ราคารวม : {{ receipt.recTotalPrice + ' บาท' }}</v-card-title
-            >
-            <v-card-title style="text-align: center" class="mt-3">เลือกวิธีการชำระเงิน</v-card-title
-            ><v-row class="mt-3"
-              ><v-col
-                ><v-btn
-                  style="width: 100%; border-width: 2px"
-                  :height="200"
-                  stacked
-                  variant="outlined"
-                  @click="receipt.recPaymentMethod = 'credit card'"
-                  :style="{
-                    borderColor: receipt.recPaymentMethod === 'credit card' ? 'red' : 'black'
-                  }"
-                  ><v-icon
-                    size="100"
-                    :color="receipt.recPaymentMethod === 'credit card' ? 'red' : 'black'"
-                    >{{ mdiCreditCardOutline }}</v-icon
-                  >
-                  <h3
-                    class="mt-3"
-                    :style="{ color: receipt.recPaymentMethod === 'credit card' ? 'red' : 'black' }"
-                  >
-                    บัตรเครดิต / บัตรเดบิต
-                  </h3></v-btn
-                ></v-col
-              ><v-col>
-                <v-btn
-                  style="width: 100%; border-width: 2px"
-                  :height="200"
-                  stacked
-                  variant="outlined"
-                  @click="receipt.recPaymentMethod = 'qr-payment'"
-                  :style="{
-                    borderColor: receipt.recPaymentMethod === 'qr-payment' ? 'red' : 'black'
-                  }"
-                  ><v-icon
-                    size="100"
-                    :color="receipt.recPaymentMethod === 'qr-payment' ? 'red' : 'black'"
-                    >{{ mdiQrcodeScan }}</v-icon
-                  >
-                  <h3
-                    class="mt-3"
-                    :style="{ color: receipt.recPaymentMethod === 'qr-payment' ? 'red' : 'black' }"
-                  >
-                    QR-Payment
-                  </h3></v-btn
-                >
-              </v-col></v-row
-            ><v-btn
-              rounded="lg"
-              elevation="0"
-              class="mt-5"
+              >ราคารวม : {{ receipt.recTotalPrice + ' บาท' }}
+              {{ formatTime(countdown) }}</v-card-title
+            > -->
+            <v-sheet
               style="
+                text-align: center;
                 background: linear-gradient(to right, #b91c1c, #fa5830);
+                height: 8vh;
                 color: white;
-                width: 100%;
-                height: 5vh;
-                font-size: 18px;
+                border-radius: 8px;
               "
-              @click="saveReceipt()"
-              >ชำระเงิน</v-btn
-            ></v-card
-          ></v-stepper-window-item
+              class="mt-10 px-3"
+              ><v-row
+                ><v-col cols="3"></v-col
+                ><v-col cols="6"
+                  ><p class="mt-2" style="font-size: 24px">
+                    ราคารวม : {{ receipt.recTotalPrice + ' บาท' }}
+                  </p></v-col
+                ><v-col cols="3"
+                  ><v-card class="d-flex flex-column" variant="outlined"
+                    ><p>เวลาชำระเงิน</p>
+                    <p>{{ formatTime(countdown) }}</p></v-card
+                  ></v-col
+                ></v-row
+              ></v-sheet
+            >
+            <v-card v-if="timeout === true" :height="300" flat
+              ><v-row>
+                <v-col align="center" class="mt-5">
+                  <v-icon size="150" color="#fa5830">{{ mdiCancel }}</v-icon>
+                  <p style="font-size: 40px">หมดเวลาชำระเงิน</p>
+                  <v-btn
+                    to="/"
+                    class="mt-3"
+                    :width="300"
+                    :height="50"
+                    style="
+                      background: linear-gradient(to right, #b91c1c, #fa5830);
+                      color: white;
+                      font-size: 18px;
+                    "
+                    >กลับหน้าหลัก</v-btn
+                  >
+                </v-col>
+              </v-row></v-card
+            >
+            <div v-else>
+              <v-card-title style="text-align: center" class="mt-3"
+                >เลือกวิธีการชำระเงิน</v-card-title
+              ><v-row class="mt-3"
+                ><v-col
+                  ><v-btn
+                    style="width: 100%; border-width: 2px"
+                    :height="200"
+                    stacked
+                    variant="outlined"
+                    @click="receipt.recPaymentMethod = 'credit card'"
+                    :style="{
+                      borderColor: receipt.recPaymentMethod === 'credit card' ? 'red' : 'black'
+                    }"
+                    ><v-icon
+                      size="100"
+                      :color="receipt.recPaymentMethod === 'credit card' ? 'red' : 'black'"
+                      >{{ mdiCreditCardOutline }}</v-icon
+                    >
+                    <h3
+                      class="mt-3"
+                      :style="{
+                        color: receipt.recPaymentMethod === 'credit card' ? 'red' : 'black'
+                      }"
+                    >
+                      บัตรเครดิต / บัตรเดบิต
+                    </h3></v-btn
+                  ></v-col
+                ><v-col>
+                  <v-btn
+                    style="width: 100%; border-width: 2px"
+                    :height="200"
+                    stacked
+                    variant="outlined"
+                    @click="receipt.recPaymentMethod = 'qr-payment'"
+                    :style="{
+                      borderColor: receipt.recPaymentMethod === 'qr-payment' ? 'red' : 'black'
+                    }"
+                    ><v-icon
+                      size="100"
+                      :color="receipt.recPaymentMethod === 'qr-payment' ? 'red' : 'black'"
+                      >{{ mdiQrcodeScan }}</v-icon
+                    >
+                    <h3
+                      class="mt-3"
+                      :style="{
+                        color: receipt.recPaymentMethod === 'qr-payment' ? 'red' : 'black'
+                      }"
+                    >
+                      QR-Payment
+                    </h3></v-btn
+                  >
+                </v-col></v-row
+              ><v-btn
+                rounded="lg"
+                elevation="0"
+                class="mt-5"
+                style="
+                  background: linear-gradient(to right, #b91c1c, #fa5830);
+                  color: white;
+                  width: 100%;
+                  height: 5vh;
+                  font-size: 18px;
+                "
+                @click="saveReceipt()"
+                >ชำระเงิน</v-btn
+              >
+            </div>
+          </v-card></v-stepper-window-item
         ><v-stepper-window-item :value="5"
           ><v-card color="#fa5830" :height="300"
             ><v-row>
@@ -786,5 +873,12 @@ const days = [
       </v-stepper-window>
     </v-stepper>
   </v-container>
+
+  <v-snackbar v-model="ticketsEmptyError">
+    กรุณาเลือกที่นั่ง
+    <template v-slot:actions>
+      <v-btn color="pink" variant="text" @click="ticketsEmptyError = false"> Close </v-btn>
+    </template>
+  </v-snackbar>
 </template>
 <style scoped></style>
