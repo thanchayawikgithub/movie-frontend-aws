@@ -92,7 +92,7 @@ onMounted(async () => {
           :width="250"
           :height="40"
           class="mt-5"
-          @click="router.push({ name: 'booking' })"
+          @click="router.push({ name: 'review' })"
           style="
             background: linear-gradient(to right, #b91c1c, #ff6640);
             color: white;

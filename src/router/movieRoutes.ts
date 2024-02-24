@@ -13,6 +13,11 @@ const movieRoutes = [
     path: '/movieDetail/:movieId',
     name: 'movieDetail',
     component: () => import('../views/MovieDetail.vue')
+  },
+  {
+    path: '/review/:movieId',
+    name: 'review',
+    component: () => import('../views/ReviewView.vue')
   }
 ]
 
