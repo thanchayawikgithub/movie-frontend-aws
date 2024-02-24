@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
-import { mdiAccountOutline } from '@mdi/js'
+import { mdiAccountOutline, mdiLogout, mdiHistory, mdiTextBoxSearchOutline } from '@mdi/js'
 import router from '@/router'
 import { computed, onMounted, ref } from 'vue'
 import { watch } from 'vue'
@@ -8,6 +8,27 @@ import type Customer from '@/types/customer'
 const authStore = useAuthStore()
 
 const customer = ref<Customer>()
+
+const isMenuVisible = ref(false)
+
+const logout = () => {
+  authStore.signOut()
+
+  router.push({ name: 'home' })
+}
+const checkTicket = () => {
+  router.push({ name: 'checkTicket' })
+}
+const items = [
+  { icon: mdiHistory, title: 'ประวัติการจอง' },
+  { icon: mdiAccountOutline, title: 'ข้อมูลส่วนตัว' },
+  {
+    icon: mdiTextBoxSearchOutline,
+    title: 'ตรวจสอบตั๋ว/รับอาหารเครื่องดื่ม',
+    action: checkTicket
+  },
+  { icon: mdiLogout, title: 'ออกจากระบบ', action: logout }
+]
 
 const buttonText = computed(() => {
   if (authStore.isLoggedIn()) {
@@ -19,7 +40,8 @@ const buttonText = computed(() => {
 
 const buttonClickHandler = () => {
   if (authStore.isLoggedIn()) {
-    authStore.signOut()
+    isMenuVisible.value = true
+    // authStore.signOut()
   } else {
     authStore.showLoginDialog = true
   }
@@ -47,22 +69,40 @@ onMounted(async () => {
         >
           SCALA
         </p></v-col
-      ><v-col cols="4"
-        ><v-btn
-          @click="buttonClickHandler"
-          :prepend-icon="mdiAccountOutline"
-          rounded="xl"
-          style="
-            background: linear-gradient(to right, #b91c1c, #ff6640);
-            color: white;
-            font-family: kanit;
-            margin-top: 0.78rem;
-          "
-        >
-          {{ buttonText }}
-        </v-btn></v-col
-      ></v-row
-    ></v-app-bar
-  >
+      ><v-col cols="4">
+        <v-menu>
+          <template v-slot:activator="{ props }">
+            <v-btn
+              v-bind="props"
+              @click="buttonClickHandler"
+              :prepend-icon="mdiAccountOutline"
+              rounded="xl"
+              style="
+                background: linear-gradient(to right, #b91c1c, #ff6640);
+                color: white;
+                font-family: kanit;
+                margin-top: 0.78rem;
+              "
+            >
+              {{ buttonText }}
+            </v-btn></template
+          >
+          <v-list v-if="isMenuVisible">
+            <v-list-item
+              v-for="(item, index) in items"
+              :key="index"
+              :value="index"
+              @click="item.action"
+            >
+              <v-list-item-title>
+                <v-icon class="mr-2">{{ item.icon }}</v-icon
+                >{{ item.title }}</v-list-item-title
+              >
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </v-col>
+    </v-row>
+  </v-app-bar>
 </template>
 <style scoped></style>
