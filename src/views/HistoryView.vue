@@ -203,7 +203,11 @@ onMounted(async () => {
                   ที่นั่ง
                 </p>
                 <p class="ml-2" style="color: #b91c1c; font-weight: 600; font-size: 25px">
-                  {{ selectedReceipt?.tickets[0].showtime.showtimeseats }}
+                  <!-- {{
+                    selectedReceipt?.tickets
+                      .map((showtimeSeat) => showtimeSeat.seat.seatNumber)
+                      .join(',')
+                  }} -->
                 </p>
               </v-col>
             </v-row>
