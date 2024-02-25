@@ -17,6 +17,10 @@ const receipts = ref<Receipt[]>([])
 const movie = ref<Movie>()
 const movieHistoryDetailDialog = ref(false)
 
+const handleReviewButtonClick = (movieId: number) => {
+  router.push({ name: 'review', params: { movieId } })
+}
+
 const getFormattedTime = (dateObject: Date) => {
   const hours = dateObject.getHours()
   const minutes = dateObject.getMinutes()
@@ -114,7 +118,7 @@ onMounted(async () => {
               :width="150"
               :height="40"
               class="mt-6 ml-2"
-              @click="router.push({ name: 'review' })"
+              @click="handleReviewButtonClick"
               style="
                 background: linear-gradient(to right, #b91c1c, #ff6640);
                 color: white;
