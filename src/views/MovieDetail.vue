@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import router from '@/router'
+import customer from '@/services/customer'
 import { useMovieStore } from '@/stores/movie'
 import type Movie from '@/types/movie'
 import { mdiMapMarker, mdiVolumeHigh, mdiSofaSingle, mdiSofa, mdiClockOutline } from '@mdi/js'
@@ -78,42 +79,28 @@ onMounted(async () => {
       >
     </v-row>
     <v-divider style="border: 1px solid black" class="mt-3 mb-3 border-opacity-20"></v-divider>
-    <v-row>
+    <h2 class="mb-1 ml-5" style="color: black">รีวิวภาพยนตร์</h2>
+    <v-row v-for="review in movie?.reviews" :key="review.reviewId">
       <v-col cols="7">
-        <h2 class="mb-1 ml-5" style="color: black">รีวิวภาพยนตร์</h2>
-        <p class="mb-1 ml-5" style="color: black; font-weight: 200">1521****545</p>
-        <p class="mb-1 ml-5" style="color: black; font-weight: 200">24 ธันวาคม 2567 10:50</p>
-
-        <v-rating
-          v-model="rating"
-          readonly
-          size="large"
-          class="ma-2 ml-3"
-          density="compact"
-          style="color: #b91c1c"
-        ></v-rating>
-      </v-col>
-    </v-row>
-    <v-divider style="border: 1px solid black" class="mt-3 mb-3 border-opacity-20"></v-divider>
-    <v-row>
-      <v-col cols="7">
-        <p class="mb-1 ml-5" style="color: black; font-weight: 200">ภัทร***จำ</p>
-        <p class="mb-1 ml-5" style="color: black; font-weight: 200">25 ธันวาคม 2567 05:50</p>
-
-        <v-rating
-          v-model="rating"
-          readonly
-          size="large"
-          class="ma-2 ml-3"
-          density="compact"
-          style="color: #b91c1c"
-        ></v-rating>
         <p class="mb-1 ml-5" style="color: black; font-weight: 200">
-          สนุกมากเนื้อเรื่องดี cg ดีมาก
+          {{
+            review.customer
+              ? review.customer.cusFirstname + ' ' + review.customer.cusLastname
+              : 'Anonymous'
+          }}
         </p>
+        <p class="mb-1 ml-5" style="color: black; font-weight: 200">{{ review.creatDate }}</p>
+        <v-rating
+          v-model="review.reviewRating"
+          readonly
+          size="large"
+          class="ma-2 ml-3"
+          density="compact"
+          style="color: #b91c1c"
+        ></v-rating>
       </v-col>
+      <v-divider style="border: 1px solid black" class="mt-3 mb-3 border-opacity-20"></v-divider>
     </v-row>
-
     <v-row>
       <v-col cols="12" align="center"
         ><v-btn
