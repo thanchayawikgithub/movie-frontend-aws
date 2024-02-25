@@ -179,7 +179,7 @@ const toPaymentStep = () => {
   startCountdown()
 }
 
-const countdown = ref(5) // 10 minutes countdown in seconds
+const countdown = ref(100) // 10 minutes countdown in seconds
 
 const timeout = ref(false)
 const paymentTimeOut = () => {

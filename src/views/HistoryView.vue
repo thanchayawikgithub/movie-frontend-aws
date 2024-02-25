@@ -35,9 +35,14 @@ onMounted(async () => {
           style="border-radius: 1rem; background: #b91c1c"
           :width="275"
           :height="400"
-          :src="`http://localhost:3000/movies/${receipt.tickets[0].showtime.movie.movieId}/image`"
         >
-          <v-img class="mt-2 ml-2" style="border-radius: 1rem" :width="260" :height="385"></v-img>
+          <v-img
+            class="mt-2 ml-2"
+            style="border-radius: 1rem"
+            :width="260"
+            :height="385"
+            :src="`http://localhost:3000/movies/${receipt.tickets[0].showtime.movie.movieId}/image`"
+          ></v-img>
         </v-card>
       </v-col>
       <v-col cols="3" class="d-flex flex-column mt-12 ml-7">
