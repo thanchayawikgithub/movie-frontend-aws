@@ -112,7 +112,7 @@ onMounted(async () => {
             :width="120"
             :height="40"
             class="mt-2 ml-4"
-            @click="saveReview()"
+            @click="saveReview(), router.push({ name: 'movieDetail' })"
             style="
               background: linear-gradient(to right, #b91c1c, #ff6640);
               color: white;

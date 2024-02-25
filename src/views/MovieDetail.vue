@@ -3,7 +3,13 @@ import router from '@/router'
 import customer from '@/services/customer'
 import { useMovieStore } from '@/stores/movie'
 import type Movie from '@/types/movie'
-import { mdiMapMarker, mdiVolumeHigh, mdiSofaSingle, mdiSofa, mdiClockOutline } from '@mdi/js'
+import {
+  mdiMapMarker,
+  mdiVolumeHigh,
+  mdiSofaSingle,
+  mdiAccountCircle,
+  mdiClockOutline
+} from '@mdi/js'
 import { onMounted, ref } from 'vue'
 
 const movieId = +router.currentRoute.value.params.movieId.toString()
@@ -12,7 +18,36 @@ const movie = ref<Movie>()
 const rating = ref(4)
 onMounted(async () => {
   movie.value = await movieStore.getMovie(movieId)
+  console.log(movie.value)
 })
+
+const getFormattedTime = (dateObject: Date) => {
+  const hours = dateObject.getHours()
+  const minutes = dateObject.getMinutes()
+  const formattedTime = `${padZero(hours)}:${padZero(minutes)}`
+
+  return formattedTime
+}
+
+const formatShowDate = (dateTime: Date | undefined): string => {
+  if (!dateTime) return ''
+  const dateObject = new Date(dateTime)
+  const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' }
+  const formattedDate = dateObject.toLocaleDateString('th-TH', options)
+
+  return formattedDate
+}
+
+const formatTime = (seconds: number) => {
+  const minutes = Math.floor(seconds / 60)
+  const remainingSeconds = seconds % 60
+  return `${padZero(minutes)}:${padZero(remainingSeconds)}`
+}
+
+const padZero = (value: number) => {
+  // Add leading zero if the value is less than 10
+  return value < 10 ? `0${value}` : value
+}
 </script>
 <template>
   <v-container fluid style="background: white; color:; font-weight: bold">
@@ -83,13 +118,18 @@ onMounted(async () => {
     <v-row v-for="review in movie?.reviews" :key="review.reviewId">
       <v-col cols="7">
         <p class="mb-1 ml-5" style="color: black; font-weight: 200">
+          <v-icon color="#b91c1c">{{ mdiAccountCircle }}</v-icon>
           {{
             review.customer
               ? review.customer.cusFirstname + ' ' + review.customer.cusLastname
               : 'Anonymous'
           }}
         </p>
-        <p class="mb-1 ml-5" style="color: black; font-weight: 200">{{ review.creatDate }}</p>
+        <p class="mb-1 ml-5" style="color: black; font-weight: 200">
+          {{ formatShowDate(review.creatDate) }} |
+          <span>{{ getFormattedTime(new Date(review.creatDate)) }}</span>
+        </p>
+        <p class="mb-1 ml-5" style="color: black; font-weight: 200">{{ review.reviewComment }}</p>
         <v-rating
           v-model="review.reviewRating"
           readonly
