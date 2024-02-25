@@ -1,6 +1,13 @@
 import type ReceiptDto from '@/types/receiptDto'
 import axios from './axios'
 
+const getReceipts = () => {
+  return axios.get(`receipts`)
+}
+
+const getReceiptByCusId = (cusId: number) => {
+  return axios.get(`receipts/customer/${cusId}`)
+}
 const saveReceipt = (receiptDto: ReceiptDto) => {
   return axios.post('receipts', {
     cusId: receiptDto.cusId,
@@ -16,4 +23,4 @@ const saveReceipt = (receiptDto: ReceiptDto) => {
     card: receiptDto.recPaymentMethod === 'credit card' ? receiptDto.cardId : undefined
   })
 }
-export default { saveReceipt }
+export default { saveReceipt, getReceipts, getReceiptByCusId }

@@ -1,3 +1,6 @@
+import type Food from './foods'
+import type Receipt from './receipt'
+
 export default interface ReceiptFood {
   recFoodId: number
 

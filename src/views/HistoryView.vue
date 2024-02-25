@@ -1,42 +1,49 @@
 <script setup lang="ts">
 import router from '@/router'
 import { useMovieStore } from '@/stores/movie'
+import { useAuthStore } from '@/stores/auth'
+import { useReceiptStore } from '@/stores/receipt'
 import type Movie from '@/types/movie'
-import {
-  mdiMapMarker,
-  mdiCalendarToday,
-  mdiSofaSingle,
-  mdiFood,
-  mdiClockOutline,
-  mdiVolumeHigh
-} from '@mdi/js'
+import type Receipt from '@/types/receipt'
+import { mdiMapMarker, mdiCalendarToday, mdiFood, mdiVolumeHigh } from '@mdi/js'
 import { onMounted, ref } from 'vue'
 
 // const movieId = +router.currentRoute.value.params.movieId.toString()
+
+const receiptStore = useReceiptStore()
 const movieStore = useMovieStore()
+const authStore = useAuthStore()
+const receipts = ref<Receipt[]>([])
 const movie = ref<Movie>()
 const movieHistoryDetailDialog = ref(false)
 
 onMounted(async () => {
+  const currentUser = await authStore.getCurrentUser()
   // movie.value = await movieStore.getMovie(movieId)
+  receipts.value = await receiptStore.getReceiptByCusId(currentUser!.cusId)
+
+  console.log(receipts.value)
 })
 </script>
 <template>
   <v-container fluid style="background: white; color:; font-weight: bold">
-    <v-row>
+    <h1 style="color: black; font-weight: 200" class="ml-7 mb-5">ประวัติการจอง</h1>
+    <v-row v-for="receipt in receipts" :key="receipt.receiptId">
       <v-col cols="2" class="justify-center">
-        <h1 style="color: black; font-weight: 200" class="ml-7 mb-5">ประวัติการจอง</h1>
         <v-card
           class="ml-5 mt-1"
           style="border-radius: 1rem; background: #b91c1c"
           :width="275"
           :height="400"
+          :src="`http://localhost:3000/movies/${receipt.tickets[0].showtime.movie.movieId}/image`"
         >
           <v-img class="mt-2 ml-2" style="border-radius: 1rem" :width="260" :height="385"></v-img>
         </v-card>
       </v-col>
       <v-col cols="3" class="d-flex flex-column mt-12 ml-7">
-        <h1 class="mb-5 mt-5 ml-7" style="color: black">ดูน 2</h1>
+        <h1 class="mb-5 mt-5 ml-7" style="color: black">
+          {{ receipt.tickets[0].showtime.movie.movieName }}
+        </h1>
 
         <p style="color: #b91c1c; font-weight: 600; font-size: larger" class="ml-7 mb-6">
           <v-icon class="mr-2">{{ mdiMapMarker }}</v-icon
@@ -84,7 +91,9 @@ onMounted(async () => {
           >
         </v-row>
       </v-col>
+      <v-divider style="border: 1px solid black" class="mt-3 mb-3 border-opacity-20"></v-divider>
     </v-row>
+
     <v-dialog v-model="movieHistoryDetailDialog" width="auto">
       <v-card :width="1200" :height="700">
         <v-row>
@@ -203,6 +212,5 @@ onMounted(async () => {
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-divider style="border: 1px solid black" class="mt-3 mb-3 border-opacity-20"></v-divider>
   </v-container>
 </template>
