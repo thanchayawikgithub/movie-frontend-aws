@@ -8,8 +8,6 @@ import type Receipt from '@/types/receipt'
 import { mdiMapMarker, mdiCalendarToday, mdiFood, mdiVolumeHigh } from '@mdi/js'
 import { onMounted, ref } from 'vue'
 
-// const movieId = +router.currentRoute.value.params.movieId.toString()
-
 const receiptStore = useReceiptStore()
 const movieStore = useMovieStore()
 const authStore = useAuthStore()
@@ -17,8 +15,10 @@ const receipts = ref<Receipt[]>([])
 const movie = ref<Movie>()
 const movieHistoryDetailDialog = ref(false)
 
-const handleReviewButtonClick = (movieId: number) => {
-  router.push({ name: 'review', params: { movieId } })
+const handleReviewButtonClick = async (selectedMovieId: number) => {
+  // Now you can use selectedMovieId as needed
+  movie.value = await movieStore.getMovie(selectedMovieId)
+  router.push({ name: 'review', params: { movieId: selectedMovieId } })
 }
 
 const getFormattedTime = (dateObject: Date) => {
@@ -51,7 +51,7 @@ const padZero = (value: number) => {
 
 onMounted(async () => {
   const currentUser = await authStore.getCurrentUser()
-  // movie.value = await movieStore.getMovie(movieId)
+
   receipts.value = await receiptStore.getReceiptByCusId(currentUser!.cusId)
 
   console.log(receipts.value)
@@ -118,7 +118,7 @@ onMounted(async () => {
               :width="150"
               :height="40"
               class="mt-6 ml-2"
-              @click="handleReviewButtonClick"
+              @click="handleReviewButtonClick(receipt.tickets[0].showtime.movie.movieId)"
               style="
                 background: linear-gradient(to right, #b91c1c, #ff6640);
                 color: white;
