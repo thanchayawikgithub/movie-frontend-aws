@@ -39,5 +39,18 @@ export const useMovieStore = defineStore('movie', () => {
     }
   }
 
-  return { getMovies, getShowtime, getMovie, getShowtimesTheater }
+  const saveReview = async (data: {
+    ticketId: number
+    reviewRating: number
+    reviewComment: string | null
+    cusId: number
+  }) => {
+    try {
+      await movieService.saveReview(data)
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  return { getMovies, getShowtime, getMovie, getShowtimesTheater, saveReview }
 })

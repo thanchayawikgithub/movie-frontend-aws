@@ -41,7 +41,7 @@ const receipt = ref<ReceiptDto>({
 
 const saveReceipt = async () => {
   const customer = await authStore.getCurrentUser()
-  receipt.value.cusId = customer.cusId || 0
+  receipt.value.cusId = customer!.cusId || 0
   const savedReceipt = await receiptStore.saveReceipt(receipt.value)
   console.log(savedReceipt)
   step.value = 5
@@ -301,7 +301,7 @@ const days = [
             :width="250"
             :height="40"
             class="mt-5"
-            @click="router.push({ name: 'movieDetail' })"
+            @click="router.push({ name: 'movie' })"
             style="
               background: linear-gradient(to right, #b91c1c, #fa5830);
               color: white;

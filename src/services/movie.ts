@@ -10,8 +10,18 @@ const getMovie = (movieId: number) => {
 const getShowtime = (showtimeId: number) => {
   return axios.get(`movies/showtime/${showtimeId}`)
 }
+
 const getShowtimesTheater = (movieId: number) => {
   return axios.get(`theaters/showtimes/movie/${movieId}`)
 }
 
-export default { getMovies, getMovie, getShowtime, getShowtimesTheater }
+const saveReview = (data: {
+  ticketId: number
+  reviewRating: number
+  reviewComment: string | null
+  cusId: number
+}) => {
+  return axios.post('reviews', data)
+}
+
+export default { getMovies, getMovie, getShowtime, getShowtimesTheater, saveReview }

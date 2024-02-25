@@ -13,7 +13,10 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   const getCurrentUser = async () => {
-    const token = localStorage.getItem('access_token') || ''
+    const token = localStorage.getItem('access_token')
+    if (!token) {
+      return
+    }
     const decode: any = jwtDecode(token)
     const customer: Customer = decode.sub
     return customer

@@ -2,7 +2,7 @@ const movieRoutes = [
   {
     path: '/movie/:movieId',
     name: 'movie',
-    component: () => import('../views/movie/MovieView.vue')
+    component: () => import('../views/MovieDetail.vue')
   },
   {
     path: '/booking/:movieId',
@@ -10,12 +10,7 @@ const movieRoutes = [
     component: () => import('../views/BookingView.vue')
   },
   {
-    path: '/movieDetail/:movieId',
-    name: 'movieDetail',
-    component: () => import('../views/MovieDetail.vue')
-  },
-  {
-    path: '/review/:movieId',
+    path: '/movie/:movieId/review',
     name: 'review',
     component: () => import('../views/ReviewView.vue')
   },

@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import router from '@/router'
+import { useAuthStore } from '@/stores/auth'
 import { useMovieStore } from '@/stores/movie'
+import { useTicketStore } from '@/stores/ticket'
 import type Movie from '@/types/movie'
+import type Ticket from '@/types/ticket'
 import { mdiTicket, mdiClockOutline } from '@mdi/js'
 import { computed, onMounted, ref } from 'vue'
 
@@ -9,12 +12,28 @@ const movieId = +router.currentRoute.value.params.movieId.toString()
 const movieStore = useMovieStore()
 const movie = ref<Movie>()
 const isTicket = ref(false)
+const ticketNumber = ref('')
+const ticketStore = useTicketStore()
+const authStore = useAuthStore()
+const ticket = ref<Ticket>()
 const rating = ref(0)
-
-const isCheckTicket = () => {
-  isTicket.value = Boolean(movie?.value?.movieId)
+const comment = ref('')
+const checkTicket = async () => {
+  ticket.value = await ticketStore.getTicketByNumber(ticketNumber.value)
+  console.log(ticket.value)
+  if (ticket && !ticket.value?.review) isTicket.value = true
 }
 
+const saveReview = async () => {
+  const currentUser = await authStore.getCurrentUser()
+  const data = {
+    ticketId: ticket.value!.ticketId,
+    reviewRating: rating.value,
+    reviewComment: comment.value.length > 0 ? comment.value : null,
+    cusId: currentUser?.cusId || 0
+  }
+  await movieStore.saveReview(data)
+}
 onMounted(async () => {
   movie.value = await movieStore.getMovie(movieId)
 })
@@ -51,7 +70,7 @@ onMounted(async () => {
         <v-row class="mt-2">
           <v-col cols="9" style="color: black">
             <v-text-field
-              :v-model="movie?.movieId"
+              v-model="ticketNumber"
               :prepend-icon="mdiTicket"
               class="ml-5"
               label="กรอกหมายเลขตั๋วของท่าน หรือ ทำการเข้าสู่ระบบ"
@@ -64,7 +83,7 @@ onMounted(async () => {
               :width="120"
               :height="40"
               class="mt-2"
-              @click="isCheckTicket"
+              @click="checkTicket()"
               style="
                 background: linear-gradient(to right, #b91c1c, #ff6640);
                 color: white;
@@ -74,33 +93,34 @@ onMounted(async () => {
             >
           </v-col>
         </v-row>
-        <v-row v-if="isTicket">
-          <div class="ml-4" style="color: #b91c1c">
-            <v-rating v-model="rating" hover half-increments></v-rating>
-          </div>
-        </v-row>
-        <v-textarea
-          v-if="isTicket"
-          style="color: #b91c1c"
-          class="ml-5 mt-3"
-          :height="250"
-          label="แสดงความคิดเห็น"
-          variant="outlined"
-        ></v-textarea>
-        <v-btn
-          v-if="isTicket"
-          rounded="xl"
-          :width="120"
-          :height="40"
-          class="mt-2 ml-4"
-          @click="router.push({ name: 'movieDetail' })"
-          style="
-            background: linear-gradient(to right, #b91c1c, #ff6640);
-            color: white;
-            font-weight: bold;
-          "
-          >รีวิว</v-btn
-        >
+        <div v-if="isTicket">
+          <v-row>
+            <div class="ml-4" style="color: #b91c1c">
+              <v-rating v-model="rating" hover half-increments></v-rating>
+            </div>
+          </v-row>
+          <v-textarea
+            v-model="comment"
+            style="color: black"
+            class="ml-5 mt-3"
+            :height="250"
+            label="แสดงความคิดเห็น"
+            variant="outlined"
+          ></v-textarea>
+          <v-btn
+            rounded="xl"
+            :width="120"
+            :height="40"
+            class="mt-2 ml-4"
+            @click="saveReview()"
+            style="
+              background: linear-gradient(to right, #b91c1c, #ff6640);
+              color: white;
+              font-weight: bold;
+            "
+            >รีวิว</v-btn
+          >
+        </div>
       </v-col>
     </v-row>
   </v-container>
