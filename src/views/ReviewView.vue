@@ -21,7 +21,7 @@ const comment = ref('')
 const checkTicket = async () => {
   ticket.value = await ticketStore.getTicketByNumber(ticketNumber.value)
   console.log(ticket.value)
-  if (ticket && !ticket.value?.review) isTicket.value = true
+  if (ticket.value && !ticket.value?.review) isTicket.value = true
 }
 
 const saveReview = async () => {

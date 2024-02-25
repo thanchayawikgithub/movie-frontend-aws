@@ -18,6 +18,11 @@ const movieRoutes = [
     path: '/checkTicket',
     name: 'checkTicket',
     component: () => import('../views/CheckTicketView.vue')
+  },
+  {
+    path: '/history',
+    name: 'history',
+    component: () => import('../views/HistoryView.vue')
   }
 ]
 

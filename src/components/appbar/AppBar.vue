@@ -13,14 +13,17 @@ const isMenuVisible = ref(false)
 
 const logout = () => {
   authStore.signOut()
-
   router.push({ name: 'home' })
 }
 const checkTicket = () => {
   router.push({ name: 'checkTicket' })
 }
+
+const history = () => {
+  router.push({ name: 'history' })
+}
 const items = [
-  { icon: mdiHistory, title: 'ประวัติการจอง' },
+  { icon: mdiHistory, title: 'ประวัติการจอง', action: history },
   { icon: mdiAccountOutline, title: 'ข้อมูลส่วนตัว' },
   {
     icon: mdiTextBoxSearchOutline,
