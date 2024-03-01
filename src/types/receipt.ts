@@ -21,6 +21,8 @@ export default interface Receipt {
 
   card: Card
 
+  recNumber: string
+
   tickets: Ticket[]
 
   recfoods: ReceiptFood[]

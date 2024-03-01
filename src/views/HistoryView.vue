@@ -5,21 +5,25 @@ import { useAuthStore } from '@/stores/auth'
 import { useReceiptStore } from '@/stores/receipt'
 import type Movie from '@/types/movie'
 import type Receipt from '@/types/receipt'
-import { mdiMapMarker, mdiCalendarToday, mdiFood, mdiVolumeHigh } from '@mdi/js'
+import {
+  mdiMapMarker,
+  mdiCalendarToday,
+  mdiFood,
+  mdiVolumeHigh,
+  mdiShare,
+  mdiCommentText
+} from '@mdi/js'
 import { onMounted, ref } from 'vue'
+import useClipboard from 'vue-clipboard3'
 
 const receiptStore = useReceiptStore()
 const movieStore = useMovieStore()
 const authStore = useAuthStore()
 const receipts = ref<Receipt[]>([])
 const movie = ref<Movie>()
+const { toClipboard } = useClipboard()
 const movieHistoryDetailDialog = ref(false)
-
-const handleReviewButtonClick = async (selectedMovieId: number) => {
-  // Now you can use selectedMovieId as needed
-  movie.value = await movieStore.getMovie(selectedMovieId)
-  router.push({ name: 'review', params: { movieId: selectedMovieId } })
-}
+const reviewMovieDialog = ref(false)
 
 const getFormattedTime = (dateObject: Date) => {
   const hours = dateObject.getHours()
@@ -27,6 +31,23 @@ const getFormattedTime = (dateObject: Date) => {
   const formattedTime = `${padZero(hours)}:${padZero(minutes)}`
 
   return formattedTime
+}
+
+const snackbar = ref(false)
+
+const handleShare = async (ticketReviewUrl: string) => {
+  const textToCopy = `${ticketReviewUrl}!`
+
+  try {
+    await navigator.clipboard.writeText(textToCopy)
+
+    snackbar.value = true
+  } catch (err) {
+    console.error('Error copying text to clipboard:', err)
+  }
+  return {
+    snackbar
+  }
 }
 
 const formatShowDate = (dateTime: Date | undefined): string => {
@@ -43,6 +64,15 @@ const selectedReceipt = ref<Receipt>()
 const handleDetailButtonClick = (receipt: Receipt) => {
   selectedReceipt.value = receipt
   movieHistoryDetailDialog.value = true
+}
+
+const handleReviewButtonClick = (receipt: Receipt) => {
+  selectedReceipt.value = receipt
+  reviewMovieDialog.value = true
+}
+
+const handleReview = async (ticketUrls: string) => {
+  router.push({ name: 'review', params: { ticketNumber: ticketUrls } })
 }
 
 const formatTime = (seconds: number) => {
@@ -125,7 +155,7 @@ onMounted(async () => {
               :width="150"
               :height="40"
               class="mt-6 ml-2"
-              @click="handleReviewButtonClick(receipt.tickets[0].showtime.movie.movieId)"
+              @click="handleReviewButtonClick(receipt)"
               style="
                 background: linear-gradient(to right, #b91c1c, #ff6640);
                 color: white;
@@ -173,7 +203,7 @@ onMounted(async () => {
                   ราคารวม
                 </p>
                 <p class="ml-7" style="color: #b91c1c; font-weight: 600; font-size: 30px">
-                  {{ selectedReceipt?.tickets[0].ticketPrice }}฿
+                  {{ selectedReceipt?.recTotalPrice }}฿
                 </p>
               </v-col>
             </v-row>
@@ -202,12 +232,12 @@ onMounted(async () => {
                 <p style="color: black; font-weight: 600; font-size: medium" class="ml-7">
                   ที่นั่ง
                 </p>
-                <p class="ml-2" style="color: #b91c1c; font-weight: 600; font-size: 25px">
-                  <!-- {{
+                <p class="ml-5" style="color: #b91c1c; font-weight: 600; font-size: 25px">
+                  {{
                     selectedReceipt?.tickets
                       .map((showtimeSeat) => showtimeSeat.seat.seatNumber)
                       .join(',')
-                  }} -->
+                  }}
                 </p>
               </v-col>
             </v-row>
@@ -266,7 +296,7 @@ onMounted(async () => {
                   รหัสการซื้อ
                 </p>
                 <p class="ml-5" style="color: #b91c1c; font-weight: 600; font-size: 25px">
-                  {{ selectedReceipt?.tickets[0].ticketNumber }}
+                  {{ selectedReceipt?.recNumber }}
                 </p>
               </v-col>
               <v-col class="d-flex flex-column">
@@ -292,5 +322,95 @@ onMounted(async () => {
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-dialog v-model="reviewMovieDialog" width="auto">
+      <v-card :width="1200" :height="700">
+        <v-row>
+          <v-col cols="2" class="justify-center">
+            <v-card
+              class="ml-10 mt-5"
+              style="border-radius: 1rem; background: #b91c1c"
+              :width="190"
+              :height="265"
+            >
+              <v-img
+                class="mt-2"
+                style="border-radius: 1rem"
+                :width="200"
+                :height="250"
+                :src="`http://localhost:3000/movies/${selectedReceipt?.tickets[0].showtime.movie.movieId}/image`"
+              ></v-img>
+            </v-card>
+          </v-col>
+          <v-col cols="10">
+            <v-row>
+              <v-col cols="10" class="d-flex flex-column" align="center">
+                <h1 class="mt-2 ml-7" style="color: black">รีวิว</h1>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="8" class="d-flex flex-column ml-16">
+                <h1 class="mb-2 ml-7" style="color: black">
+                  {{ selectedReceipt?.tickets[0].showtime.movie.movieName }}
+                </h1>
+                <p style="color: black; font-size: medium" class="ml-7">
+                  <v-icon>{{ mdiVolumeHigh }}</v-icon
+                  >ENG/TH
+                </p>
+              </v-col>
+            </v-row>
+
+            <v-divider
+              style="border: 1px solid black"
+              class="mt-3 mb-3 ml-16 mr-5 border-opacity-40"
+            ></v-divider>
+
+            <v-row>
+              <v-col cols="5" class="d-flex flex-column ml-5">
+                <p style="color: black; font-weight: bold; font-size: 25px" class="ml-12">
+                  ที่นั่ง
+                </p>
+              </v-col>
+            </v-row>
+            <v-row v-for="(ticket, index) in selectedReceipt?.tickets" :key="index">
+              <v-col cols="8" class="d-flex flex-column ml-9">
+                <p class="ml-8" style="color: #b91c1c; font-weight: 600; font-size: 25px">
+                  {{ ticket.seat.seatNumber }}<span>: {{ ticket.ticketNumber }}</span>
+                </p>
+              </v-col>
+              <v-col cols="1" class="d-flex flex-column">
+                <v-btn color="#b91c1c" @click="handleReview(ticket.ticketNumber)"
+                  ><v-icon>{{ mdiCommentText }}</v-icon
+                  >รีวิว</v-btn
+                >
+              </v-col>
+              <v-col cols="1" class="d-flex flex-column">
+                <v-btn color="#b91c1c" @click="handleShare(ticket.ticketReviewUrl)">
+                  <v-icon>{{ mdiShare }} </v-icon>แชร์</v-btn
+                >
+              </v-col>
+
+              <v-divider
+                style="border: 1px solid black"
+                class="mt-3 mb-3 ml-16 mr-5 border-opacity-40"
+              ></v-divider>
+            </v-row>
+          </v-col>
+        </v-row>
+
+        <v-card-actions>
+          <v-btn block @click="reviewMovieDialog = false" style="font-weight: bold" color="#b91c1c"
+            >ปิด</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-snackbar v-model="snackbar" :timeout="600" bottom>
+      คัดลอกแล้ว!
+
+      <template v-slot:actions>
+        <v-btn color="red" variant="text" @click="snackbar = false"> ปิด </v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>

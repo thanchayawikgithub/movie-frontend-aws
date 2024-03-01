@@ -8,7 +8,7 @@ import type Ticket from '@/types/ticket'
 import { mdiTicket, mdiClockOutline } from '@mdi/js'
 import { computed, onMounted, ref } from 'vue'
 
-const movieId = +router.currentRoute.value.params.movieId.toString()
+// const movieId = +router.currentRoute.value.params.movieId.toString()
 const movieStore = useMovieStore()
 const movie = ref<Movie>()
 const isTicket = ref(false)
@@ -35,7 +35,7 @@ const saveReview = async () => {
   await movieStore.saveReview(data)
 }
 onMounted(async () => {
-  movie.value = await movieStore.getMovie(movieId)
+  // movie.value = await movieStore.getMovie(movieId)
 })
 </script>
 <template>

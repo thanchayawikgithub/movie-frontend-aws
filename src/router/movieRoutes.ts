@@ -10,7 +10,7 @@ const movieRoutes = [
     component: () => import('../views/BookingView.vue')
   },
   {
-    path: '/movie/:movieId/review',
+    path: '/review/:ticketNumber',
     name: 'review',
     component: () => import('../views/ReviewView.vue')
   },
