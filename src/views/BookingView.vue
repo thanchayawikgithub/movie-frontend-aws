@@ -179,7 +179,7 @@ const toPaymentStep = () => {
   startCountdown()
 }
 
-const countdown = ref(100) // 10 minutes countdown in seconds
+const countdown = ref(600) // 10 minutes countdown in seconds
 
 const timeout = ref(false)
 const paymentTimeOut = () => {
@@ -275,6 +275,8 @@ const days = [
   'ศุกร์',
   'เสาร์'
 ]
+
+const selectedPaymentMethod = ref(false)
 </script>
 <template>
   <v-container fluid>
@@ -312,7 +314,7 @@ const days = [
         </v-col>
       </v-row>
     </v-card>
-    <v-stepper alt-labels class="mt-5" v-model="step" :height="1150"
+    <v-stepper alt-labels class="mt-5" v-model="step" :height="1300"
       ><v-stepper-header
         ><v-stepper-item title="เลือกรอบฉาย" :value="1" color="red"></v-stepper-item
         ><v-divider></v-divider>
@@ -685,8 +687,8 @@ const days = [
             </v-row>
           </v-card></v-stepper-window-item
         >
-        <v-stepper-window-item :value="4"
-          ><v-card
+        <v-stepper-window-item :value="4">
+          <v-card
             style="margin-inline: 50vh; border-color: #b91c1c; border-width: 3px"
             rounded="lg"
             variant="outlined"
@@ -734,20 +736,6 @@ const days = [
                 </p></v-col
               ></v-row
             >
-            <!-- <v-card-title
-              style="
-                text-align: center;
-                background: linear-gradient(to right, #b91c1c, #fa5830);
-                height: 8vh;
-                font-size: 24px;
-                color: white;
-
-                border-radius: 8px;
-              "
-              class="mt-10"
-              >ราคารวม : {{ receipt.recTotalPrice + ' บาท' }}
-              {{ formatTime(countdown) }}</v-card-title
-            > -->
             <v-sheet
               style="
                 text-align: center;
@@ -791,7 +779,7 @@ const days = [
                 </v-col>
               </v-row></v-card
             >
-            <div v-else>
+            <v-card flat v-if="timeout === false && selectedPaymentMethod === false">
               <v-card-title style="text-align: center" class="mt-3"
                 >เลือกวิธีการชำระเงิน</v-card-title
               ><v-row class="mt-3"
@@ -855,11 +843,37 @@ const days = [
                   height: 5vh;
                   font-size: 18px;
                 "
-                @click="saveReceipt()"
-                >ชำระเงิน</v-btn
+                @click="selectedPaymentMethod = true"
+                >ยืนยัน</v-btn
               >
-            </div>
-          </v-card></v-stepper-window-item
+            </v-card>
+            <v-card v-if="timeout === false && selectedPaymentMethod === true" flat
+              ><v-img
+                src="https://cdn.discordapp.com/attachments/1179393306707361792/1213117442860253184/13JwIlFw0mHB-xFjUCvLpbQ.png?ex=65f44ea9&is=65e1d9a9&hm=8e9c70b015f607ce250c37b7aacdb3cafe8f3391fe06756bd8bc3a5c5f97cf67&"
+                :width="280"
+                class="mx-auto mt-5"
+              ></v-img
+              ><v-img
+                class="mx-auto"
+                :width="300"
+                :src="`https://promptpay.io/0959389589/${receipt.recTotalPrice}`"
+              ></v-img
+              ><v-btn
+                rounded="lg"
+                elevation="0"
+                class="mt-5"
+                style="
+                  background: linear-gradient(to right, #b91c1c, #fa5830);
+                  color: white;
+                  width: 100%;
+                  height: 5vh;
+                  font-size: 18px;
+                "
+                @click="saveReceipt()"
+                >ยืนยัน</v-btn
+              ></v-card
+            ></v-card
+          ></v-stepper-window-item
         ><v-stepper-window-item :value="5"
           ><v-card color="#fa5830" :height="300"
             ><v-row>
