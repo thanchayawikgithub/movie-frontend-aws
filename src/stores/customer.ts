@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import customerService from '@/services/customer'
+
 export const useCustomerStore = defineStore('customer', () => {
   const addCustomer = async (data: {
     email: string
@@ -13,5 +14,14 @@ export const useCustomerStore = defineStore('customer', () => {
       console.log(err)
     }
   }
-  return { addCustomer }
+
+  const getCustomer = async (cusId: number) => {
+    try {
+      const response = await customerService.getCustomer(cusId)
+      return response.data
+    } catch (err) {
+      console.log(err)
+    }
+  }
+  return { addCustomer, getCustomer }
 })

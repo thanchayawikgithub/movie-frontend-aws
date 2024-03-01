@@ -20,7 +20,7 @@ const saveReceipt = (receiptDto: ReceiptDto) => {
       recFoodQty: recFood.recFoodQty,
       recFoodPrice: recFood.recFoodPrice
     })),
-    card: receiptDto.recPaymentMethod === 'credit card' ? receiptDto.cardId : undefined
+    cardId: receiptDto.recPaymentMethod === 'credit card' ? receiptDto.cardId : undefined
   })
 }
 export default { saveReceipt, getReceipts, getReceiptByCusId }

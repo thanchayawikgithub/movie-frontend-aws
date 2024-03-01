@@ -1,9 +1,14 @@
+import type Customer from './customer'
+import type Receipt from './receipt'
+
 export default interface Card {
   cardId: number
 
   cardHolderName: string
 
   cardNumber: string
+
+  cardMaskNumber?: string
 
   cardExpiredDate: string
 
