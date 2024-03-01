@@ -12,4 +12,8 @@ const addCustomer = (data: {
     cusLastname: data.lastname
   })
 }
-export default { addCustomer }
+
+const getCustomer = (cusId: number) => {
+  return axios.get(`customers/${cusId}`)
+}
+export default { addCustomer, getCustomer }
