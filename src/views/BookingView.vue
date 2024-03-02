@@ -308,39 +308,49 @@ const selectedPaymentMethod = ref(false)
 </script>
 <template>
   <v-container fluid>
-    <v-card :width="1200" :height="405" class="mx-auto mt-5 pa-3">
-      <v-row>
-        <v-col cols="3">
-          <v-img
-            :height="385"
-            :width="260"
-            :src="`http://localhost:3000/movies/${movie?.movieId}/image`"
-          ></v-img>
-        </v-col>
-        <v-col cols="9" class="d-flex flex-column">
-          <h2 class="mb-5">{{ movie?.movieName }}</h2>
-          <p>
-            หมวดหมู่ : {{ movie?.categories.map((category) => category.movieCatName).join('/') }}
-          </p>
-          <p class="mt-3">
-            <v-icon class="mr-1">{{ mdiClockOutline }}</v-icon
-            >{{ movie?.movieLength }} นาที
-          </p>
-          <v-btn
-            rounded="xl"
-            :width="250"
-            :height="40"
-            class="mt-5"
-            @click="router.push({ name: 'movie' })"
-            style="
-              background: linear-gradient(to right, #b91c1c, #fa5830);
-              color: white;
-              font-weight: bold;
-            "
-            >รายละเอียดภาพยนตร์</v-btn
-          >
-        </v-col>
-      </v-row>
+    <v-card style="background: linear-gradient(to right, #991b1b, #ad390b)" variant="flat">
+      <v-img
+        class="mt-10"
+        :height="375"
+        :width="270"
+        :src="`http://localhost:3000/movies/${movie?.movieId}/image`"
+        style="
+          position: absolute;
+          z-index: 1;
+          top: 43%;
+          left: 30%;
+          transform: translate(2%, -50%);
+          border-radius: 1em;
+        "
+      ></v-img>
+      <v-card :width="800" :height="300" class="mx-auto mt-16 mb-10">
+        <v-row>
+          <v-col cols="5"></v-col>
+          <v-col cols="5" class="d-flex flex-column mt-10">
+            <h2 class="mb-5">{{ movie?.movieName }}</h2>
+            <p>
+              หมวดหมู่ : {{ movie?.categories.map((category) => category.movieCatName).join('/') }}
+            </p>
+            <p class="mt-3">
+              <v-icon class="mr-1">{{ mdiClockOutline }}</v-icon
+              >{{ movie?.movieLength }} นาที
+            </p>
+            <v-btn
+              rounded="xl"
+              :width="250"
+              :height="40"
+              class="mt-5"
+              @click="router.push({ name: 'movie' })"
+              style="
+                background: linear-gradient(to right, #b91c1c, #fa5830);
+                color: white;
+                font-weight: bold;
+              "
+              >รายละเอียดภาพยนตร์</v-btn
+            >
+          </v-col>
+        </v-row>
+      </v-card>
     </v-card>
     <v-stepper alt-labels class="mt-5" v-model="step" :height="1300"
       ><v-stepper-header

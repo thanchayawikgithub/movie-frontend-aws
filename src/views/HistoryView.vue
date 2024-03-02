@@ -95,8 +95,11 @@ onMounted(async () => {
 })
 </script>
 <template>
-  <v-container fluid style="background: white; color:; font-weight: bold">
+  <v-container fluid style="background: white; font-weight: bold">
     <h1 style="color: black; font-weight: 200" class="ml-7 mb-5">ประวัติการจอง</h1>
+    <!-- <v-row>
+      <v-col>ไม่มีประวัติการจอง</v-col>
+    </v-row> -->
     <v-row v-for="receipt in receipts" :key="receipt.receiptId">
       <v-col cols="2" class="justify-center">
         <v-card
@@ -169,36 +172,32 @@ onMounted(async () => {
       <v-divider style="border: 1px solid black" class="mt-3 mb-3 border-opacity-20"></v-divider>
     </v-row>
     <v-dialog v-model="movieHistoryDetailDialog" width="auto">
-      <v-card :width="1200" :height="700">
+      <v-img
+        style="margin-bottom: -12px"
+        src="https://cdn.discordapp.com/attachments/893061087069634571/1213425612723589160/ticket-border-top_copy.png?ex=65f56daa&is=65e2f8aa&hm=3895b41dcbc6511a88d029e1685522a8c18e17154cf65d706df80e45f3df3893&"
+      ></v-img>
+      <v-card :width="1200" :height="730" style="border-radius: 0px" class="ribbon-card">
         <v-row>
-          <v-col cols="2" class="justify-center">
-            <v-card
-              class="ml-10 mt-5"
-              style="border-radius: 1rem; background: #b91c1c"
-              :width="190"
-              :height="265"
-            >
-              <v-img
-                class="mt-2"
-                style="border-radius: 1rem"
-                :width="200"
-                :height="250"
-                :src="`http://localhost:3000/movies/${selectedReceipt?.tickets[0].showtime.movie.movieId}/image`"
-              ></v-img>
-            </v-card>
+          <v-col cols="3" class="justify-center">
+            <v-img
+              class="mt-7 ml-5"
+              :width="350"
+              :height="350"
+              :src="`http://localhost:3000/movies/${selectedReceipt?.tickets[0].showtime.movie.movieId}/image`"
+            ></v-img>
           </v-col>
-          <v-col cols="10">
+          <v-col cols="9">
             <v-row>
-              <v-col cols="8" class="d-flex flex-column mt-12 ml-16">
-                <h1 class="mb-2 mt-5 ml-7" style="color: black">
+              <v-col cols="8" class="d-flex flex-column ml-16">
+                <h2 class="mb-2 mt-5 ml-7" style="color: black; font-size: 25px">
                   {{ selectedReceipt?.tickets[0].showtime.movie.movieName }}
-                </h1>
-                <p style="color: black; font-size: medium" class="ml-7">
+                </h2>
+                <p style="color: black; font-size: 15px" class="ml-7">
                   <v-icon>{{ mdiVolumeHigh }}</v-icon
                   >ENG/TH
                 </p>
               </v-col>
-              <v-col class="d-flex flex-column mt-12 ml-16">
+              <v-col class="d-flex flex-column ml-16">
                 <p style="color: black; font-weight: 600; font-size: larger" class="mt-5 ml-7">
                   ราคารวม
                 </p>
@@ -300,19 +299,35 @@ onMounted(async () => {
                 </p>
               </v-col>
               <v-col class="d-flex flex-column">
-                <p
-                  class="mt-15"
-                  style="color: #b91c1c; font-weight: 600; font-size: 25px; text-align: center"
+                <v-card
+                  :height="65"
+                  style="background-color: #b91c1c; border-radius: 0"
+                  class="overlay-card"
                 >
-                  ชำระเงินแล้ว
-                </p>
+                  <p
+                    class="mt-4"
+                    style="color: white; font-weight: 600; font-size: 20px; text-align: center"
+                  >
+                    ชำระเงินแล้ว<span>({{ selectedReceipt?.recTotalPrice }} ฿)</span>
+                  </p>
+                </v-card>
               </v-col>
             </v-row>
           </v-col>
+          <v-divider class="historyMovie__line"></v-divider>
+          <v-row class="mt-1 justify-center">
+            <v-card-subtitle style="text-align: center">
+              แสดงบัตรชมภาพยนตร์นี้เพื่อเข้าชมภาพยนตร์ <br />
+              บัตรชมภาพยนตร์ที่ทำการซื้อแล้วไม่สามารถเปลี่ยนหรือทำรายการคืนได้ทุกกรณี <br />
+              เงื่อนไขเป็นไปตามที่บริษัทฯ กำหนด
+              และขอสงวนสิทธิ์ในการเปลี่ยนแปลงโดยไม่ต้องแจ้งให้ทราบล่วงหน้า
+            </v-card-subtitle>
+          </v-row>
         </v-row>
 
         <v-card-actions>
           <v-btn
+            class="mt-5"
             block
             @click="movieHistoryDetailDialog = false"
             style="font-weight: bold"
@@ -321,39 +336,39 @@ onMounted(async () => {
           >
         </v-card-actions>
       </v-card>
+      <v-img
+        style="margin-top: -3px"
+        src="https://media.discordapp.net/attachments/893061087069634571/1213423654583402496/ticket-border-bottom.png?ex=65f56bd7&is=65e2f6d7&hm=23f170cc3f28440e099bc456186783c87a503dd8dea8b7e241d928c162cb49fe&=&format=webp&quality=lossless"
+      ></v-img>
     </v-dialog>
 
     <v-dialog v-model="reviewMovieDialog" width="auto">
-      <v-card :width="1200" :height="700">
+      <v-img
+        style="margin-bottom: -12px"
+        src="https://cdn.discordapp.com/attachments/893061087069634571/1213425612723589160/ticket-border-top_copy.png?ex=65f56daa&is=65e2f8aa&hm=3895b41dcbc6511a88d029e1685522a8c18e17154cf65d706df80e45f3df3893&"
+      ></v-img>
+      <v-card :width="1200" :height="730" style="border-radius: 0px" class="ribbon-card">
         <v-row>
-          <v-col cols="2" class="justify-center">
-            <v-card
-              class="ml-10 mt-5"
-              style="border-radius: 1rem; background: #b91c1c"
-              :width="190"
-              :height="265"
-            >
-              <v-img
-                class="mt-2"
-                style="border-radius: 1rem"
-                :width="200"
-                :height="250"
-                :src="`http://localhost:3000/movies/${selectedReceipt?.tickets[0].showtime.movie.movieId}/image`"
-              ></v-img>
-            </v-card>
+          <v-col cols="3" class="justify-center">
+            <v-img
+              class="mt-7 ml-5"
+              :width="350"
+              :height="350"
+              :src="`http://localhost:3000/movies/${selectedReceipt?.tickets[0].showtime.movie.movieId}/image`"
+            ></v-img>
           </v-col>
-          <v-col cols="10">
+          <v-col cols="9">
             <v-row>
               <v-col cols="10" class="d-flex flex-column" align="center">
-                <h1 class="mt-2 ml-7" style="color: black">รีวิว</h1>
+                <h1 class="mt-2 ml-7" style="color: black; font-size: 25px">รีวิว</h1>
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="8" class="d-flex flex-column ml-16">
-                <h1 class="mb-2 ml-7" style="color: black">
+                <h1 class="mb-2 ml-7" style="color: black; font-size: 25px">
                   {{ selectedReceipt?.tickets[0].showtime.movie.movieName }}
                 </h1>
-                <p style="color: black; font-size: medium" class="ml-7">
+                <p style="color: black; font-size: 15px" class="ml-7">
                   <v-icon>{{ mdiVolumeHigh }}</v-icon
                   >ENG/TH
                 </p>
@@ -374,7 +389,7 @@ onMounted(async () => {
             </v-row>
             <v-row v-for="(ticket, index) in selectedReceipt?.tickets" :key="index">
               <v-col cols="8" class="d-flex flex-column ml-9">
-                <p class="ml-8" style="color: #b91c1c; font-weight: 600; font-size: 25px">
+                <p class="ml-8" style="color: #b91c1c; font-weight: 600; font-size: 20px">
                   {{ ticket.seat.seatNumber }}<span>: {{ ticket.ticketNumber }}</span>
                 </p>
               </v-col>
@@ -390,10 +405,7 @@ onMounted(async () => {
                 >
               </v-col>
 
-              <v-divider
-                style="border: 1px solid black"
-                class="mt-3 mb-3 ml-16 mr-5 border-opacity-40"
-              ></v-divider>
+              <v-divider class="mt-3 mb-3 ml-16 mr-8 historyMovie__line"></v-divider>
             </v-row>
           </v-col>
         </v-row>
@@ -404,6 +416,10 @@ onMounted(async () => {
           >
         </v-card-actions>
       </v-card>
+      <v-img
+        style="margin-top: -3px"
+        src="https://media.discordapp.net/attachments/893061087069634571/1213423654583402496/ticket-border-bottom.png?ex=65f56bd7&is=65e2f6d7&hm=23f170cc3f28440e099bc456186783c87a503dd8dea8b7e241d928c162cb49fe&=&format=webp&quality=lossless"
+      ></v-img>
     </v-dialog>
     <v-snackbar v-model="snackbar" :timeout="600" bottom>
       คัดลอกแล้ว!
@@ -414,3 +430,11 @@ onMounted(async () => {
     </v-snackbar>
   </v-container>
 </template>
+<style>
+.historyMovie__line {
+  margin-top: 1px;
+  padding: 1px;
+
+  border-top: 2px dashed #000;
+}
+</style>

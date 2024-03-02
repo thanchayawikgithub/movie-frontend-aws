@@ -14,7 +14,7 @@ const toBookingPage = async (movieId: number) => {
 </script>
 
 <template>
-  <v-container fluid
+  <v-container fluid style="color: white"
     ><v-row
       ><v-col cols="4"></v-col
       ><v-col cols="4" align="center">

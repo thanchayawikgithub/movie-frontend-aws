@@ -9,8 +9,6 @@ import SignUpDialog from './views/auth/SignUpDialog.vue'
   <SignUpDialog />
   <v-layout>
     <AppBar />
-    <v-main style="background: linear-gradient(to right, #991b1b, #ad390b); color: white"
-      ><RouterView
-    /></v-main>
+    <v-main style="background: linear-gradient(to right, #991b1b, #ad390b)"><RouterView /></v-main>
   </v-layout>
 </template>
