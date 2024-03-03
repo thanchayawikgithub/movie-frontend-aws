@@ -11,6 +11,13 @@ const movies = ref<Movie[]>([])
 const toBookingPage = async (movieId: number) => {
   router.push({ name: 'booking', params: { movieId: movieId } })
 }
+const beforeRouteUpdate = () => {
+  // Scroll to the top of the page when the route is updated
+  window.scrollTo({ top: 0, behavior: 'auto' })
+}
+onMounted(() => {
+  router.beforeEach(beforeRouteUpdate)
+})
 </script>
 
 <template>

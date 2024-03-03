@@ -46,7 +46,7 @@ onMounted(async () => {
 })
 </script>
 <template>
-  <v-container fluid style="background: white; color:; font-weight: bold">
+  <v-container fluid style="background: white; font-weight: bold">
     <v-row>
       <v-col cols="2" class="justify-center">
         <v-card
@@ -111,7 +111,7 @@ onMounted(async () => {
     </v-row>
     <v-divider style="border: 1px solid black" class="mt-3 mb-3 border-opacity-20"></v-divider>
     <h2 class="mb-1 ml-5" style="color: black">รีวิวภาพยนตร์</h2>
-    <v-row v-if="reviews && reviews?.length > 0" v-for="review in reviews" :key="review.reviewId">
+    <v-row v-for="review in reviews" :key="review.reviewId" v-if="reviews && reviews?.length > 0">
       <v-col cols="7">
         <p class="mb-1 ml-5" style="color: black; font-weight: 200">
           <v-icon color="#b91c1c">{{ mdiAccountCircle }}</v-icon>

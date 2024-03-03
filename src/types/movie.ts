@@ -15,6 +15,8 @@ export default interface Movie {
 
   movieTrailer: string
 
+  movieBackground: string
+
   creatDate: Date
 
   deleteDate: Date

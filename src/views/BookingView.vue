@@ -32,6 +32,7 @@ import {
 import { computed } from 'vue'
 import { watch } from 'vue'
 import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { VForm } from 'vuetify/components'
 const authStore = useAuthStore()
 const receiptStore = useReceiptStore()
@@ -55,6 +56,7 @@ const saveReceipt = async () => {
 const movieId = +router.currentRoute.value.params.movieId.toString()
 const step = ref(1)
 const customerStore = useCustomerStore()
+
 const customer = ref<Customer>()
 const movieStore = useMovieStore()
 const movie = ref<Movie>()
@@ -269,6 +271,7 @@ watch(step, async () => {
       await prepareCard()
     }
   }
+  window.scrollTo({ top: 0, behavior: 'auto' })
 })
 
 const prepareCard = () => {
@@ -318,6 +321,10 @@ const cardNumber = ref('')
 const cardExp = ref('')
 const cardCVV = ref('')
 
+const recTotalTicket = computed(() => {
+  return receipt.value.tickets.reduce((total, ticket) => total + ticket.seat.seatPrice, 0)
+})
+
 const validateForm = async () => {
   const { valid } = await form.value.validate()
   if (valid) {
@@ -354,7 +361,7 @@ const goToStep = (targetStep: number) => {
     <v-stepper
       alt-labels
       v-model="step"
-      :height="1550"
+      :height="1850"
       width="100vw"
       style="margin-left: -17px; margin-top: -20px"
       ><v-stepper-header
@@ -370,16 +377,14 @@ const goToStep = (targetStep: number) => {
         ><v-stepper-item title="สิ้นสุด" :value="5" color="red"></v-stepper-item
       ></v-stepper-header>
       <v-card
-        style="
-          background-image: url(https://lh3.googleusercontent.com/8q7117KHiHFOIyShPTPnOEO7xKEgWc1l5XHwfh9ttgO6H5jRqsjkpqZdSdA9WYcp1V9LCNU1iQ1pvzRh4pNzkOrt8_fPUe3HpA=w1920);
-          background-size: 100% auto;
-          border-radius: 0em;
-          background-size: cover;
-          width: 100vw;
-          margin-left: -15px;
-
-          margin-bottom: 20px;
-        "
+        :style="{
+          'background-image': `url(${movie?.movieBackground})`,
+          'background-size': 'cover',
+          'border-radius': '0em',
+          width: '100vw',
+          'margin-left': '-15px',
+          'margin-bottom': '20px'
+        }"
       >
         <v-img
           v-if="step <= 3 || receipt?.receiptFoods.length == 0"
@@ -411,7 +416,13 @@ const goToStep = (targetStep: number) => {
             border-radius: 1em;
           "
         ></v-img>
-        <v-card :width="800" :height="300" class="mx-auto mt-16 mb-13" style="opacity: 0.9">
+        <v-card
+          v-if="step <= 4"
+          :width="800"
+          :height="300"
+          class="mx-auto mt-16 mb-13"
+          style="opacity: 0.9"
+        >
           <v-row>
             <v-col cols="5"></v-col>
             <v-col cols="6" class="d-flex flex-column mt-10">
@@ -447,8 +458,7 @@ const goToStep = (targetStep: number) => {
                 }}</span>
               </p>
               <p class="mt-3" v-if="step > 3" style="font-weight: bold; font-size: medium">
-                ราคารวม :
-                {{ receipt.recTotalPrice }}
+                ราคารวม : {{ recTotalTicket + ' ฿ ' }}
               </p>
 
               <v-btn
@@ -862,11 +872,16 @@ const goToStep = (targetStep: number) => {
         >
         <v-stepper-window-item :value="4">
           <v-card
-            style="margin-inline: 50vh; border-color: #b91c1c; border-width: 3px"
+            style="
+              margin-inline: 50vh;
+              border-color: #b91c1c;
+              border-width: 3px;
+              display: flex;
+              flex-direction: column;
+            "
             rounded="lg"
             variant="outlined"
             class="pa-10"
-            :height="950"
             ><v-card-title
               style="text-align: center; font-size: 28px; font-weight: bold"
               class="mb-4"
@@ -926,11 +941,11 @@ const goToStep = (targetStep: number) => {
               ><v-row
                 ><v-col cols="3"></v-col
                 ><v-col cols="6"
-                  ><p class="mt-2" style="font-size: 24px">
-                    ราคารวม : {{ receipt.recTotalPrice + ' บาท' }}
+                  ><p class="mt-5" style="font-size: 24px">
+                    ราคารวมสุทธิ : {{ receipt.recTotalPrice + ' บาท' }}
                   </p></v-col
                 ><v-col cols="3"
-                  ><v-card class="d-flex flex-column" variant="outlined"
+                  ><v-card class="d-flex flex-column mt-3" variant="outlined"
                     ><p>เวลาชำระเงิน</p>
                     <p>{{ formatTime(countdown) }}</p></v-card
                   ></v-col
@@ -1105,9 +1120,17 @@ const goToStep = (targetStep: number) => {
                             :rules="[(v) => !!v || 'กรุณาใส่รหัสความปลอดภัย']"
                           ></v-text-field>
                         </div>
-                        <div style="margin-inline: 10vw" class="d-flex mt-5 mb-5">
-                          <v-btn class="mr-3" type="submit">บันทึก</v-btn
-                          ><v-btn @click="(addCard = false), clearCardForm()">ยกลิก</v-btn>
+                        <div style="margin-inline: 10vw" class="d-flex mt-5 mb-5 justify-center">
+                          <v-btn
+                            class="mr-3"
+                            type="submit"
+                            style="width: 150px; background-color: darkcyan; color: #f1f5f9"
+                            >บันทึก</v-btn
+                          ><v-btn
+                            @click="(addCard = false), clearCardForm()"
+                            style="width: 150px; background-color: #b91c1c; color: #f1f5f9"
+                            >ยกลิก</v-btn
+                          >
                         </div></v-form
                       ></v-col
                     ></v-row
