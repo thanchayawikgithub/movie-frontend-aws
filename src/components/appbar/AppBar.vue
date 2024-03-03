@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
-import { mdiAccountOutline, mdiLogout, mdiHistory, mdiTextBoxSearchOutline } from '@mdi/js'
+import {
+  mdiAccountOutline,
+  mdiLogout,
+  mdiHistory,
+  mdiTextBoxSearchOutline,
+  mdiAccount
+} from '@mdi/js'
 import router from '@/router'
 import { computed, onMounted, ref } from 'vue'
 import { watch } from 'vue'
@@ -78,7 +84,7 @@ onMounted(async () => {
             <v-btn
               v-bind="props"
               @click="buttonClickHandler"
-              :prepend-icon="mdiAccountOutline"
+              :prepend-icon="mdiAccount"
               rounded="xl"
               style="
                 background: linear-gradient(to right, #b91c1c, #ff6640);

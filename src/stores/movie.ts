@@ -21,6 +21,15 @@ export const useMovieStore = defineStore('movie', () => {
     }
   }
 
+  const getMovieReviews = async (movieId: number) => {
+    try {
+      const response = await movieService.getMovieReviews(movieId)
+      return response.data
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   const getShowtime = async (showId: number) => {
     try {
       const response = await movieService.getShowtime(showId)
@@ -52,5 +61,5 @@ export const useMovieStore = defineStore('movie', () => {
     }
   }
 
-  return { getMovies, getShowtime, getMovie, getShowtimesTheater, saveReview }
+  return { getMovies, getShowtime, getMovie, getShowtimesTheater, saveReview, getMovieReviews }
 })

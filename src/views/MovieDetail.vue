@@ -3,23 +3,14 @@ import router from '@/router'
 import customer from '@/services/customer'
 import { useMovieStore } from '@/stores/movie'
 import type Movie from '@/types/movie'
-import {
-  mdiMapMarker,
-  mdiVolumeHigh,
-  mdiSofaSingle,
-  mdiAccountCircle,
-  mdiClockOutline
-} from '@mdi/js'
+import type Review from '@/types/review'
+import { mdiAccountCircle, mdiClockOutline } from '@mdi/js'
 import { onMounted, ref } from 'vue'
 
 const movieId = +router.currentRoute.value.params.movieId.toString()
 const movieStore = useMovieStore()
 const movie = ref<Movie>()
-const rating = ref(4)
-onMounted(async () => {
-  movie.value = await movieStore.getMovie(movieId)
-  console.log(movie.value)
-})
+const reviews = ref<Review[]>()
 
 const getFormattedTime = (dateObject: Date) => {
   const hours = dateObject.getHours()
@@ -48,6 +39,11 @@ const padZero = (value: number) => {
   // Add leading zero if the value is less than 10
   return value < 10 ? `0${value}` : value
 }
+
+onMounted(async () => {
+  movie.value = await movieStore.getMovie(movieId)
+  reviews.value = await movieStore.getMovieReviews(movieId)
+})
 </script>
 <template>
   <v-container fluid style="background: white; color:; font-weight: bold">
@@ -106,7 +102,7 @@ const padZero = (value: number) => {
     <v-divider style="border: 1px solid black" class="mt-3 mb-3 border-opacity-20"></v-divider>
 
     <v-row>
-      <v-col cols="7">
+      <v-col cols="11">
         <h2 class="mb-1 ml-5" style="color: black">เรื่องย่อ</h2>
         <p class="mt-1 ml-5" style="color: black; font-weight: 200">
           {{ movie?.movieDesc }}
@@ -115,7 +111,7 @@ const padZero = (value: number) => {
     </v-row>
     <v-divider style="border: 1px solid black" class="mt-3 mb-3 border-opacity-20"></v-divider>
     <h2 class="mb-1 ml-5" style="color: black">รีวิวภาพยนตร์</h2>
-    <v-row v-for="review in movie?.reviews" :key="review.reviewId">
+    <v-row v-if="reviews && reviews?.length > 0" v-for="review in reviews" :key="review.reviewId">
       <v-col cols="7">
         <p class="mb-1 ml-5" style="color: black; font-weight: 200">
           <v-icon color="#b91c1c">{{ mdiAccountCircle }}</v-icon>
@@ -141,7 +137,8 @@ const padZero = (value: number) => {
       </v-col>
       <v-divider style="border: 1px solid black" class="mt-3 mb-3 border-opacity-20"></v-divider>
     </v-row>
-    <v-row>
+    <p v-else class="ml-10 mt-5" style="font-size: 28px; color: gray">ยังไม่มีรีวิว</p>
+    <!-- <v-row>
       <v-col cols="12" align="center"
         ><v-btn
           rounded="xl"
@@ -157,6 +154,6 @@ const padZero = (value: number) => {
           >รีวิว</v-btn
         ></v-col
       >
-    </v-row>
+    </v-row> -->
   </v-container>
 </template>

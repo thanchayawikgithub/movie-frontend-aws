@@ -7,6 +7,10 @@ const getMovie = (movieId: number) => {
   return axios.get(`movies/${movieId}`)
 }
 
+const getMovieReviews = (movieId: number) => {
+  return axios.get(`reviews/movie/${movieId}`)
+}
+
 const getShowtime = (showtimeId: number) => {
   return axios.get(`movies/showtime/${showtimeId}`)
 }
@@ -24,4 +28,11 @@ const saveReview = (data: {
   return axios.post('reviews', data)
 }
 
-export default { getMovies, getMovie, getShowtime, getShowtimesTheater, saveReview }
+export default {
+  getMovies,
+  getMovie,
+  getShowtime,
+  getShowtimesTheater,
+  saveReview,
+  getMovieReviews
+}
