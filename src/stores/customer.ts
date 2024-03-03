@@ -23,5 +23,21 @@ export const useCustomerStore = defineStore('customer', () => {
       console.log(err)
     }
   }
-  return { addCustomer, getCustomer }
+
+  const addCard = async (data: {
+    cardHolderName: string
+    cardNumber: string
+    cardExpiredDate: string
+    cardCvv: string
+    cusId: number
+  }) => {
+    try {
+      const response = await customerService.addCard(data)
+      return response.data
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  return { addCustomer, getCustomer, addCard }
 })

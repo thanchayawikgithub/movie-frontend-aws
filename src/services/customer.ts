@@ -16,4 +16,15 @@ const addCustomer = (data: {
 const getCustomer = (cusId: number) => {
   return axios.get(`customers/${cusId}`)
 }
-export default { addCustomer, getCustomer }
+
+const addCard = (data: {
+  cardHolderName: string
+  cardNumber: string
+  cardExpiredDate: string
+  cardCvv: string
+  cusId: number
+}) => {
+  return axios.post(`cards`, data)
+}
+
+export default { addCustomer, getCustomer, addCard }

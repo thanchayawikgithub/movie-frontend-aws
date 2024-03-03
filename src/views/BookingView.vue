@@ -26,11 +26,13 @@ import {
   mdiCreditCardOutline,
   mdiTrashCan,
   mdiTicketPercent,
-  mdiCancel
+  mdiCancel,
+  mdiCreditCardPlusOutline
 } from '@mdi/js'
 import { computed } from 'vue'
 import { watch } from 'vue'
 import { onMounted, ref } from 'vue'
+import { VForm } from 'vuetify/components'
 const authStore = useAuthStore()
 const receiptStore = useReceiptStore()
 const receipt = ref<ReceiptDto>({
@@ -264,14 +266,18 @@ watch(step, async () => {
     const currentCus = await authStore.getCurrentUser()
     customer.value = await customerStore.getCustomer(currentCus!.cusId)
     if (customer.value!.cards.length > 0) {
-      customer.value!.cards = customer.value!.cards.map((card) => ({
-        ...card,
-        cardMaskNumber: maskCardNumber(card.cardNumber)
-      }))
-      receipt.value.cardId = customer.value?.cards[0].cardId
+      await prepareCard()
     }
   }
 })
+
+const prepareCard = () => {
+  customer.value!.cards = customer.value!.cards.map((card) => ({
+    ...card,
+    cardMaskNumber: maskCardNumber(card.cardNumber)
+  }))
+  receipt.value.cardId = customer.value?.cards[0].cardId
+}
 
 const maskCardNumber = (cardNumber: string) => {
   const visibleDigits = 4
@@ -305,7 +311,38 @@ const days = [
 ]
 
 const selectedPaymentMethod = ref(false)
+const addCard = ref(false)
+const form = ref(VForm)
+const cardHolderName = ref('')
+const cardNumber = ref('')
+const cardExp = ref('')
+const cardCVV = ref('')
 
+const validateForm = async () => {
+  const { valid } = await form.value.validate()
+  if (valid) {
+    const currentCus = await authStore.getCurrentUser()
+    const data = {
+      cardHolderName: cardHolderName.value,
+      cardNumber: cardNumber.value,
+      cardExpiredDate: cardExp.value,
+      cardCvv: cardCVV.value,
+      cusId: currentCus?.cusId || 0
+    }
+    await customerStore.addCard(data)
+    customer.value = await customerStore.getCustomer(currentCus!.cusId)
+    await prepareCard()
+    addCard.value = false
+    clearCardForm()
+  }
+}
+
+const clearCardForm = () => {
+  cardHolderName.value = ''
+  cardNumber.value = ''
+  cardExp.value = ''
+  cardCVV.value = ''
+}
 const goToStep = (targetStep: number) => {
   if (step.value > 1) {
     step.value = targetStep
@@ -829,6 +866,7 @@ const goToStep = (targetStep: number) => {
             rounded="lg"
             variant="outlined"
             class="pa-10"
+            :height="950"
             ><v-card-title
               style="text-align: center; font-size: 28px; font-weight: bold"
               class="mb-4"
@@ -919,7 +957,7 @@ const goToStep = (targetStep: number) => {
                 </v-col>
               </v-row></v-card
             >
-            <v-card flat v-if="timeout === false && selectedPaymentMethod === false">
+            <v-card flat v-if="timeout === false">
               <v-card-title style="text-align: center" class="mt-3"
                 >เลือกวิธีการชำระเงิน</v-card-title
               ><v-row class="mt-3"
@@ -929,7 +967,9 @@ const goToStep = (targetStep: number) => {
                     :height="200"
                     stacked
                     variant="outlined"
-                    @click="receipt.recPaymentMethod = 'credit card'"
+                    @click="
+                      (receipt.recPaymentMethod = 'credit card'), (selectedPaymentMethod = true)
+                    "
                     :style="{
                       borderColor: receipt.recPaymentMethod === 'credit card' ? 'red' : 'black'
                     }"
@@ -953,7 +993,9 @@ const goToStep = (targetStep: number) => {
                     :height="200"
                     stacked
                     variant="outlined"
-                    @click="receipt.recPaymentMethod = 'qr-payment'"
+                    @click="
+                      (receipt.recPaymentMethod = 'qr-payment'), (selectedPaymentMethod = true)
+                    "
                     :style="{
                       borderColor: receipt.recPaymentMethod === 'qr-payment' ? 'red' : 'black'
                     }"
@@ -972,7 +1014,8 @@ const goToStep = (targetStep: number) => {
                     </h3></v-btn
                   >
                 </v-col></v-row
-              ><v-btn
+              >
+              <!-- <v-btn
                 rounded="lg"
                 elevation="0"
                 class="mt-5"
@@ -985,7 +1028,7 @@ const goToStep = (targetStep: number) => {
                 "
                 @click="selectedPaymentMethod = true"
                 >ยืนยัน</v-btn
-              >
+              > -->
             </v-card>
             <v-card v-if="timeout === false && selectedPaymentMethod === true" flat
               ><div v-if="receipt.recPaymentMethod === 'qr-payment'">
@@ -1001,23 +1044,81 @@ const goToStep = (targetStep: number) => {
                 ></v-img>
               </div>
               <div v-if="receipt.recPaymentMethod === 'credit card'">
-                <v-card flat
-                  ><v-card-title class="text-center mt-5">บัตรของฉัน</v-card-title
-                  ><v-select
-                    variant="outlined"
-                    v-model="receipt.cardId"
-                    style="width: 60%"
-                    class="mx-auto mt-5"
-                    :items="customer?.cards"
-                    item-title="cardMaskNumber"
-                    item-value="cardId"
-                  ></v-select
+                <v-card flat v-if="addCard === false"
+                  ><v-card-title class="text-center mt-5">บัตรของฉัน</v-card-title>
+                  <div class="d-flex mt-5" style="padding-inline: 13vw">
+                    <v-select
+                      variant="outlined"
+                      v-model="receipt.cardId"
+                      style="width: 60%"
+                      class="mx-auto"
+                      :items="customer?.cards"
+                      item-title="cardMaskNumber"
+                      item-value="cardId"
+                      hide-details
+                    ></v-select
+                    ><v-btn
+                      class="ml-5"
+                      :icon="mdiCreditCardPlusOutline"
+                      style="border-radius: 4px"
+                      :height="55"
+                      size="large"
+                      variant="outlined"
+                      @click="addCard = true"
+                    ></v-btn></div
                 ></v-card>
+                <v-card flat v-else
+                  ><v-card-title class="text-center mt-5">เพิ่มบัตร</v-card-title>
+                  <v-row class="mt-2"
+                    ><v-col
+                      ><v-form ref="form" @submit.prevent="validateForm()"
+                        ><v-text-field
+                          v-model="cardHolderName"
+                          label="ชื่อผู้ถือบัตร"
+                          variant="outlined"
+                          style="margin-inline: 10vw"
+                          :rules="[(v) => !!v || 'กรุณาใส่ชื่อผู้ถือบัตร']"
+                        ></v-text-field
+                        ><v-text-field
+                          v-model="cardNumber"
+                          label="หมายเลขบัตร"
+                          variant="outlined"
+                          style="margin-inline: 10vw"
+                          class="mt-3"
+                          :rules="[
+                            (v) => !!v || 'กรุณาใส่หมายเลขบัตร',
+                            (v) => v.length <= 16 || 'กรุณาใส่ชื่อผู้ถือบัตรไม่เกิน 16 ตัวอักษร'
+                          ]"
+                        ></v-text-field>
+                        <div class="d-flex mt-3" style="margin-inline: 10vw">
+                          <v-text-field
+                            v-model="cardExp"
+                            label="ดด/ปป"
+                            variant="outlined"
+                            :rules="[(v) => !!v || 'กรุณาใส่วันหมดอายุบัตร']"
+                          ></v-text-field
+                          ><v-text-field
+                            v-model="cardCVV"
+                            label="cvv"
+                            variant="outlined"
+                            class="ml-3"
+                            :rules="[(v) => !!v || 'กรุณาใส่รหัสความปลอดภัย']"
+                          ></v-text-field>
+                        </div>
+                        <div style="margin-inline: 10vw" class="d-flex mt-5 mb-5">
+                          <v-btn class="mr-3" type="submit">บันทึก</v-btn
+                          ><v-btn @click="(addCard = false), clearCardForm()">ยกลิก</v-btn>
+                        </div></v-form
+                      ></v-col
+                    ></v-row
+                  ></v-card
+                >
               </div>
               <v-btn
+                v-if="addCard === false"
                 rounded="lg"
                 elevation="0"
-                class="mt-5"
+                class="mt-6"
                 style="
                   background: linear-gradient(to right, #b91c1c, #fa5830);
                   color: white;
