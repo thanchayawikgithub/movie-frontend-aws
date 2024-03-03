@@ -305,56 +305,24 @@ const days = [
 ]
 
 const selectedPaymentMethod = ref(false)
+
+const goToStep = (targetStep: number) => {
+  if (step.value > 1) {
+    step.value = targetStep
+  }
+}
 </script>
 <template>
   <v-container fluid>
-    <v-card style="background: linear-gradient(to right, #991b1b, #ad390b)" variant="flat">
-      <v-img
-        class="mt-10"
-        :height="375"
-        :width="270"
-        :src="`http://localhost:3000/movies/${movie?.movieId}/image`"
-        style="
-          position: absolute;
-          z-index: 1;
-          top: 43%;
-          left: 30%;
-          transform: translate(2%, -50%);
-          border-radius: 1em;
-        "
-      ></v-img>
-      <v-card :width="800" :height="300" class="mx-auto mt-16 mb-10">
-        <v-row>
-          <v-col cols="5"></v-col>
-          <v-col cols="5" class="d-flex flex-column mt-10">
-            <h2 class="mb-5">{{ movie?.movieName }}</h2>
-            <p>
-              หมวดหมู่ : {{ movie?.categories.map((category) => category.movieCatName).join('/') }}
-            </p>
-            <p class="mt-3">
-              <v-icon class="mr-1">{{ mdiClockOutline }}</v-icon
-              >{{ movie?.movieLength }} นาที
-            </p>
-            <v-btn
-              rounded="xl"
-              :width="250"
-              :height="40"
-              class="mt-5"
-              @click="router.push({ name: 'movie' })"
-              style="
-                background: linear-gradient(to right, #b91c1c, #fa5830);
-                color: white;
-                font-weight: bold;
-              "
-              >รายละเอียดภาพยนตร์</v-btn
-            >
-          </v-col>
-        </v-row>
-      </v-card>
-    </v-card>
-    <v-stepper alt-labels class="mt-5" v-model="step" :height="1300"
+    <v-stepper
+      alt-labels
+      v-model="step"
+      :height="1550"
+      width="100vw"
+      style="margin-left: -17px; margin-top: -20px"
       ><v-stepper-header
-        ><v-stepper-item title="เลือกรอบฉาย" :value="1" color="red"></v-stepper-item
+        ><v-stepper-item title="เลือกรอบฉาย" :value="1" color="red" @click="goToStep(1)">
+        </v-stepper-item
         ><v-divider></v-divider>
         <v-stepper-item title="เลือกที่นั่ง" :value="2" color="red"></v-stepper-item
         ><v-divider></v-divider
@@ -364,12 +332,142 @@ const selectedPaymentMethod = ref(false)
         ><v-divider></v-divider
         ><v-stepper-item title="สิ้นสุด" :value="5" color="red"></v-stepper-item
       ></v-stepper-header>
+      <v-card
+        style="
+          background-image: url(https://lh3.googleusercontent.com/8q7117KHiHFOIyShPTPnOEO7xKEgWc1l5XHwfh9ttgO6H5jRqsjkpqZdSdA9WYcp1V9LCNU1iQ1pvzRh4pNzkOrt8_fPUe3HpA=w1920);
+          background-size: 100% auto;
+          border-radius: 0em;
+          background-size: cover;
+          width: 100vw;
+          margin-left: -15px;
+
+          margin-bottom: 20px;
+        "
+      >
+        <v-img
+          v-if="step <= 3 || receipt?.receiptFoods.length == 0"
+          class="mt-10"
+          :height="375"
+          :width="270"
+          :src="`http://localhost:3000/movies/${movie?.movieId}/image`"
+          style="
+            position: absolute;
+            z-index: 1;
+            top: 40%;
+            left: 30%;
+            transform: translate(2%, -50%);
+            border-radius: 1em;
+          "
+        ></v-img>
+        <v-img
+          v-if="step == 4 && receipt?.receiptFoods.length > 0"
+          class="mt-10"
+          :height="375"
+          :width="270"
+          :src="`http://localhost:3000/movies/${movie?.movieId}/image`"
+          style="
+            position: absolute;
+            z-index: 1;
+            top: 26%;
+            left: 30%;
+            transform: translate(2%, -50%);
+            border-radius: 1em;
+          "
+        ></v-img>
+        <v-card :width="800" :height="300" class="mx-auto mt-16 mb-13" style="opacity: 0.9">
+          <v-row>
+            <v-col cols="5"></v-col>
+            <v-col cols="6" class="d-flex flex-column mt-10">
+              <h2 class="mb-5">{{ movie?.movieName }}</h2>
+              <p v-if="step == 1">
+                หมวดหมู่ :
+                {{ movie?.categories.map((category) => category.movieCatName).join('/') }}
+              </p>
+              <p class="mt-3 mr-2" v-if="step == 1">
+                <v-icon>{{ mdiClockOutline }}</v-icon
+                >{{ movie?.movieLength }} นาที
+              </p>
+              <p v-if="step > 1" style="color: #b91c1c; font-weight: bold">
+                {{ formatShowDate(showtime?.showStart) }} |
+                {{
+                  showtime && showtime.showStart
+                    ? getFormattedTime(new Date(showtime.showStart)) + ' น.'
+                    : ''
+                }}
+              </p>
+              <p class="mt-3" v-if="step > 1" style="color: #b91c1c; font-weight: bold">
+                <v-icon>{{ mdiMapMarker }}</v-icon
+                >สกาลา บางแสน
+              </p>
+              <p class="mt-3" v-if="step > 1" style="font-weight: bold">
+                {{ showtime?.theater.theaterName }} | <v-icon>{{ mdiVolumeHigh }}</v-icon> ENG/TH 2D
+              </p>
+              <p class="mt-3" v-if="step > 3" style="font-weight: bold; font-size: medium">
+                ทั้งนั่ง :
+                <span style="color: #b91c1c">{{
+                  receipt.tickets.map((showtimeSeat) => showtimeSeat.seat.seatNumber).join(',') ||
+                  '-'
+                }}</span>
+              </p>
+              <p class="mt-3" v-if="step > 3" style="font-weight: bold; font-size: medium">
+                ราคารวม :
+                {{ receipt.recTotalPrice - receipt.recFoodPrice }}
+              </p>
+
+              <v-btn
+                v-if="step == 1"
+                rounded="xl"
+                :width="250"
+                :height="40"
+                class="mt-5"
+                @click="router.push({ name: 'movie' })"
+                style="
+                  background: linear-gradient(to right, #b91c1c, #fa5830);
+                  color: white;
+                  font-weight: bold;
+                  opacity: 1;
+                "
+                >รายละเอียดภาพยนตร์</v-btn
+              >
+            </v-col>
+          </v-row>
+        </v-card>
+        <v-card
+          v-if="step == 4 && receipt?.receiptFoods.length > 0"
+          :width="800"
+          :height="220"
+          class="mx-auto mb-3 ;"
+          style="opacity: 0.9"
+        >
+          <p align="center" style="font-size: large; font-weight: bold" class="mt-2">
+            อาหารและเครื่องดื่ม
+          </p>
+          <v-row v-for="(recFood, index) in receipt.receiptFoods" :key="index">
+            <v-col cols="6">
+              <p class="ml-5" style="font-weight: bold; font-size: medium; color: #b91c1c">
+                {{ recFood?.food.foodName }}
+              </p></v-col
+            >
+            <v-col cols="3" class="d-flex flex-column">
+              <p v-if="step > 3" style="font-weight: bold; font-size: medium">
+                <span style="color: #b91c1c">{{ ' x ' + recFood?.recFoodQty }}</span>
+              </p>
+            </v-col>
+            <v-col cols="3" class="d-flex flex-column">
+              <p v-if="step > 3" style="font-weight: bold; font-size: medium">
+                <span style="color: #b91c1c">{{ recFood?.recFoodPrice + ' ฿ ' }}</span>
+              </p>
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-card>
+
       <v-stepper-window
         ><v-stepper-window-item :value="1">
           <v-card>
             <v-slide-group
               v-model="model"
-              selected-class="bg-primary"
+              selected-class="bg-red-darken-4"
               show-arrows
               mandatory
               class="mx-auto"
@@ -736,7 +834,7 @@ const selectedPaymentMethod = ref(false)
               class="mb-4"
               >ยืนยันการซื้อตั๋วรับชมภาพยนตร์</v-card-title
             >
-            <v-row class="mt-3"
+            <!-- <v-row class="mt-3"
               ><v-col align="center"
                 ><v-img
                   :src="`http://localhost:3000/movies/${movie?.movieId}/image`"
@@ -766,14 +864,18 @@ const selectedPaymentMethod = ref(false)
                     '-'
                   }}</span>
                 </p>
+
+
                 <p class="mt-3">
                   อาหาร / เครื่องดื่ม : {{ receipt.receiptFoods.length > 0 ? '' : '-' }}
                 </p>
                 <p v-for="(recFood, index) in receipt.receiptFoods" :key="index" class="mt-3">
                   {{ recFood.food.foodName + ' x ' + recFood.recFoodQty }}
-                </p></v-col
+                </p>
+                
+                </v-col
               ></v-row
-            >
+            > -->
             <v-sheet
               style="
                 text-align: center;
