@@ -36,7 +36,7 @@ const getFormattedTime = (dateObject: Date) => {
 const snackbar = ref(false)
 
 const handleShare = async (ticketReviewUrl: string) => {
-  const textToCopy = `${ticketReviewUrl}!`
+  const textToCopy = `${ticketReviewUrl}`
 
   try {
     await navigator.clipboard.writeText(textToCopy)
@@ -394,13 +394,20 @@ onMounted(async () => {
                 </p>
               </v-col>
               <v-col cols="1" class="d-flex flex-column">
-                <v-btn color="#b91c1c" @click="handleReview(ticket.ticketNumber)"
+                <v-btn
+                  color="#b91c1c"
+                  @click="handleReview(ticket.ticketNumber)"
+                  v-if="!ticket.review"
                   ><v-icon>{{ mdiCommentText }}</v-icon
                   >รีวิว</v-btn
                 >
               </v-col>
               <v-col cols="1" class="d-flex flex-column">
-                <v-btn color="#b91c1c" @click="handleShare(ticket.ticketReviewUrl)">
+                <v-btn
+                  color="#b91c1c"
+                  @click="handleShare(ticket.ticketReviewUrl)"
+                  v-if="!ticket.review"
+                >
                   <v-icon>{{ mdiShare }} </v-icon>แชร์</v-btn
                 >
               </v-col>

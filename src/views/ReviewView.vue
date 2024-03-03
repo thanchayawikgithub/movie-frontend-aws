@@ -6,23 +6,17 @@ import { useTicketStore } from '@/stores/ticket'
 import type Movie from '@/types/movie'
 import type Ticket from '@/types/ticket'
 import { mdiTicket, mdiClockOutline } from '@mdi/js'
-import { computed, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
-// const movieId = +router.currentRoute.value.params.movieId.toString()
+const ticketNumber = router.currentRoute.value.params.ticketNumber.toString()
 const movieStore = useMovieStore()
 const movie = ref<Movie>()
-const isTicket = ref(false)
-const ticketNumber = ref('')
+
 const ticketStore = useTicketStore()
 const authStore = useAuthStore()
 const ticket = ref<Ticket>()
 const rating = ref(0)
 const comment = ref('')
-const checkTicket = async () => {
-  ticket.value = await ticketStore.getTicketByNumber(ticketNumber.value)
-  console.log(ticket.value)
-  if (ticket.value && !ticket.value?.review) isTicket.value = true
-}
 
 const saveReview = async () => {
   const currentUser = await authStore.getCurrentUser()
@@ -35,7 +29,8 @@ const saveReview = async () => {
   await movieStore.saveReview(data)
 }
 onMounted(async () => {
-  // movie.value = await movieStore.getMovie(movieId)
+  ticket.value = await ticketStore.getTicketByNumber(ticketNumber)
+  movie.value = ticket.value?.showtime.movie
 })
 </script>
 <template>
@@ -54,7 +49,7 @@ onMounted(async () => {
             style="border-radius: 1rem"
             :width="260"
             :height="385"
-            :src="`http://localhost:3000/movies/${movieId}/image`"
+            :src="`http://localhost:3000/movies/${ticket?.showtime.movie.movieId}/image`"
           ></v-img>
         </v-card>
       </v-col>
@@ -67,33 +62,30 @@ onMounted(async () => {
           <v-icon class="mr-1">{{ mdiClockOutline }}</v-icon
           >{{ movie?.movieLength }} นาที
         </p>
-        <v-row class="mt-2">
-          <v-col cols="9" style="color: black">
-            <v-text-field
-              v-model="ticketNumber"
-              :prepend-icon="mdiTicket"
-              class="ml-5"
-              label="กรอกหมายเลขตั๋วของท่าน หรือ ทำการเข้าสู่ระบบ"
-              variant="outlined"
-            ></v-text-field>
-          </v-col>
-          <v-col>
-            <v-btn
-              rounded="xl"
-              :width="120"
-              :height="40"
-              class="mt-2"
-              @click="checkTicket()"
-              style="
-                background: linear-gradient(to right, #b91c1c, #ff6640);
-                color: white;
-                font-weight: bold;
-              "
-              >ตรวจสอบ</v-btn
-            >
-          </v-col>
-        </v-row>
-        <div v-if="isTicket">
+
+        <div class="mt-5 ml-3" v-if="ticket?.review">
+          <v-row>
+            <div class="ml-4" style="color: #b91c1c">
+              <v-rating
+                v-model="ticket.review.reviewRating"
+                hover
+                half-increments
+                readonly
+              ></v-rating>
+            </div>
+          </v-row>
+          <v-textarea
+            v-model="ticket.review.reviewComment"
+            style="color: black"
+            class="ml-5 mt-3"
+            :height="250"
+            label="แสดงความคิดเห็น"
+            variant="outlined"
+            readonly
+          ></v-textarea>
+        </div>
+
+        <div class="mt-5 ml-3" v-else>
           <v-row>
             <div class="ml-4" style="color: #b91c1c">
               <v-rating v-model="rating" hover half-increments></v-rating>
