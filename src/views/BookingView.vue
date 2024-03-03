@@ -411,7 +411,7 @@ const goToStep = (targetStep: number) => {
               </p>
               <p class="mt-3" v-if="step > 3" style="font-weight: bold; font-size: medium">
                 ราคารวม :
-                {{ receipt.recTotalPrice - receipt.recFoodPrice }}
+                {{ receipt.recTotalPrice }}
               </p>
 
               <v-btn
