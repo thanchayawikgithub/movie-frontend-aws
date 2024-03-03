@@ -425,7 +425,7 @@ const goToStep = (targetStep: number) => {
         >
           <v-row>
             <v-col cols="5"></v-col>
-            <v-col cols="6" class="d-flex flex-column mt-10">
+            <v-col cols="6" class="d-flex flex-column mt-10" style="font-weight: bold">
               <h2 class="mb-5">{{ movie?.movieName }}</h2>
               <p v-if="step == 1">
                 หมวดหมู่ :
@@ -763,23 +763,26 @@ const goToStep = (targetStep: number) => {
                       <v-btn
                         v-for="food in foods"
                         :key="food.foodId"
-                        :height="250"
-                        :width="220"
-                        class="mt-5 pt-2 mr-10"
+                        :height="230"
+                        :width="230"
+                        class="mt-5 mr-10"
                       >
                         <v-card
+                          class="card"
                           variant="flat"
-                          :height="220"
-                          :width="210"
+                          :height="230"
+                          :width="230"
                           style="font-size: 13px; font-weight: bold; text-align: center"
                           @click="selectFood(food)"
                           ><v-img
-                            class="image mb-2"
+                            class="image mb-2 mt-5"
                             style="height: 15vh; width: 20vw"
                             :src="`http://localhost:3000/foods/${food.foodId}/image`"
                           >
                           </v-img>
-                          <p style="font-size: 15px; text-align: center">{{ food.foodName }}</p>
+                          <p style="font-size: 15px; text-align: center; color: #b91c1c">
+                            {{ food.foodName }}
+                          </p>
                           <p style="font-size: 20px; text-align: center" class="mt-3">
                             {{ food.foodPrice }}฿
                           </p>
@@ -792,7 +795,7 @@ const goToStep = (targetStep: number) => {
               <v-col
                 ><v-card
                   :height="750"
-                  :width="550"
+                  :width="570"
                   class="mt-5 ml-5 pa-5"
                   style="background-color: #f1f5f9"
                   elevation="0"
@@ -1175,4 +1178,57 @@ const goToStep = (targetStep: number) => {
     </template>
   </v-snackbar>
 </template>
-<style scoped></style>
+<style scoped>
+.card {
+  box-shadow: 0px 1px 13px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 120ms;
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+
+  padding-bottom: 4em;
+}
+
+.card::after {
+  content: 'เพิ่มรายการ';
+  padding-top: 0.7em;
+  padding-left: 0.1em;
+  position: absolute;
+
+  bottom: -70px;
+  background: #b91c1c;
+  color: #fff;
+  height: 5vh;
+  width: 100%;
+  transition: all 80ms;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.card .price {
+  font-family: sans-serif;
+  font-size: 1em;
+  position: absolute;
+
+  bottom: 0.1em;
+}
+
+.card:hover::after {
+  bottom: 0;
+}
+
+.card:active {
+  transform: scale(0.98);
+}
+
+.card:active::after {
+  content: 'เพิ่ม !';
+  height: 3.125em;
+}
+
+.text {
+  max-width: 55px;
+}
+</style>
