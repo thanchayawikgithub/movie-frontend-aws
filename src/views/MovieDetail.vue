@@ -137,7 +137,7 @@ onMounted(async () => {
       </v-col>
       <v-divider style="border: 1px solid black" class="mt-3 mb-3 border-opacity-20"></v-divider>
     </v-row>
-    <p v-else class="ml-10 mt-5" style="font-size: 28px; color: gray">ยังไม่มีรีวิว</p>
+    <p v-else class="ml-5 mt-5" style="font-size: 25px; color: gray">ยังไม่มีรีวิว</p>
     <!-- <v-row>
       <v-col cols="12" align="center"
         ><v-btn

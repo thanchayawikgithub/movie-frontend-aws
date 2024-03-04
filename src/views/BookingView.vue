@@ -458,7 +458,7 @@ const goToStep = (targetStep: number) => {
                 }}</span>
               </p>
               <p class="mt-3" v-if="step > 3" style="font-weight: bold; font-size: medium">
-                ราคารวม : {{ recTotalTicket + ' ฿ ' }}
+                ราคารวม : <span style="color: #b91c1c">{{ recTotalTicket + ' ฿ ' }}</span>
               </p>
 
               <v-btn
@@ -674,7 +674,7 @@ const goToStep = (targetStep: number) => {
                   :height="630"
                   :width="450"
                   class="mt-5 ml-5 pa-5"
-                  style="background-color: #f1f5f9"
+                  style="background-color: #f1f5f9; border-radius: 1rem"
                   elevation="0"
                   ><v-row>
                     <v-col style="font-size: 22px; font-weight: bold">{{
@@ -763,24 +763,46 @@ const goToStep = (targetStep: number) => {
                       <v-btn
                         v-for="food in foods"
                         :key="food.foodId"
-                        :height="230"
+                        :height="300"
                         :width="230"
-                        class="mt-5 mr-10"
+                        style="border-radius: 1rem"
+                        class="mt-5 mr-8 ml-1"
                       >
                         <v-card
                           class="card"
                           variant="flat"
-                          :height="230"
+                          :height="300"
                           :width="230"
-                          style="font-size: 13px; font-weight: bold; text-align: center"
+                          style="
+                            font-size: 13px;
+                            font-weight: bold;
+                            text-align: center;
+                            border-radius: 1rem;
+                          "
                           @click="selectFood(food)"
-                          ><v-img
-                            class="image mb-2 mt-5"
-                            style="height: 15vh; width: 20vw"
-                            :src="`http://localhost:3000/foods/${food.foodId}/image`"
+                        >
+                          <v-card
+                            class="mt-5"
+                            variant="flat"
+                            :height="166"
+                            :width="200"
+                            style="
+                              font-size: 13px;
+                              font-weight: bold;
+                              text-align: center;
+                              border-radius: 1rem;
+                            "
                           >
-                          </v-img>
-                          <p style="font-size: 15px; text-align: center; color: #b91c1c">
+                            <v-img
+                              style="height: 100%; width: 30vw"
+                              :src="`http://localhost:3000/foods/${food.foodId}/image`"
+                            >
+                            </v-img>
+                          </v-card>
+                          <p
+                            style="font-size: 17px; text-align: center; color: #b91c1c"
+                            class="mt-5"
+                          >
                             {{ food.foodName }}
                           </p>
                           <p style="font-size: 20px; text-align: center" class="mt-3">
@@ -794,10 +816,10 @@ const goToStep = (targetStep: number) => {
               </v-col>
               <v-col
                 ><v-card
-                  :height="750"
+                  :height="680"
                   :width="570"
                   class="mt-5 ml-5 pa-5"
-                  style="background-color: #f1f5f9"
+                  style="background-color: #f1f5f9; border-radius: 1rem"
                   elevation="0"
                   ><v-row class="mb-2">
                     <v-col style="font-size: 22px; font-weight: bold; text-align: center"
@@ -806,12 +828,17 @@ const goToStep = (targetStep: number) => {
                   </v-row>
                   <v-card :height="250" variant="flat" style="background-color: #f1f5f9">
                     <v-row v-for="(recFood, index) in receipt.receiptFoods" :key="index">
-                      <v-col class="ml-9" style="font-size: 18px" cols="4">{{
+                      <v-col class="ml-9" style="font-size: 17px" cols="4">{{
                         recFood.food.foodName
                       }}</v-col>
                       <v-col style="font-size: 18px" cols="3">
                         <v-btn
-                          style="background-color: #f1f5f9; font-size: 17px; font-weight: bold"
+                          style="
+                            background-color: #f1f5f9;
+                            font-size: 17px;
+                            font-weight: bold;
+                            color: #b91c1c;
+                          "
                           density="compact"
                           icon=""
                           @click="decreaseQty(index)"
@@ -820,7 +847,12 @@ const goToStep = (targetStep: number) => {
                         >
                         {{ recFood.recFoodQty }}
                         <v-btn
-                          style="background-color: #f1f5f9; font-size: 17px; font-weight: bold"
+                          style="
+                            background-color: #f1f5f9;
+                            font-size: 17px;
+                            font-weight: bold;
+                            color: darkcyan;
+                          "
                           density="compact"
                           icon=""
                           variant="plain"
