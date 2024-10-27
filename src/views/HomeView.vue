@@ -46,7 +46,7 @@ onMounted(() => {
                         "
                         >{{ movie.movieName }}</v-card-title
                       ><v-img
-                        :src="`http://localhost:3000/movies/${movie?.movieId}/image`"
+                        :src="`${movie.movieImage}`"
                         @click="toBookingPage(movie.movieId)"
                       ></v-img> </v-card
                   ></v-col> </v-row></v-container></v-card></v-overlay
