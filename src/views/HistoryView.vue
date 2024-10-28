@@ -113,7 +113,7 @@ onMounted(async () => {
             style="border-radius: 1rem"
             :width="260"
             :height="385"
-            :src="`http://localhost:3000/movies/${receipt.tickets[0].showtime.movie.movieId}/image`"
+            :src="`${receipt.tickets[0].showtime.movie.movieImage}`"
           ></v-img>
         </v-card>
       </v-col>
@@ -183,7 +183,7 @@ onMounted(async () => {
               class="mt-7 ml-5"
               :width="350"
               :height="350"
-              :src="`http://localhost:3000/movies/${selectedReceipt?.tickets[0].showtime.movie.movieId}/image`"
+              :src="`${selectedReceipt?.tickets[0].showtime.movie.movieImage}`"
             ></v-img>
           </v-col>
           <v-col cols="9">
@@ -354,7 +354,7 @@ onMounted(async () => {
               class="mt-7 ml-5"
               :width="350"
               :height="350"
-              :src="`http://localhost:3000/movies/${selectedReceipt?.tickets[0].showtime.movie.movieId}/image`"
+              :src="`${selectedReceipt?.tickets[0].showtime.movie.movieImage}`"
             ></v-img>
           </v-col>
           <v-col cols="9">

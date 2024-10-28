@@ -391,7 +391,7 @@ const goToStep = (targetStep: number) => {
           class="mt-10"
           :height="375"
           :width="270"
-          :src="`http://localhost:3000/movies/${movie?.movieId}/image`"
+          :src="`${movie?.movieImage}`"
           style="
             position: absolute;
             z-index: 1;
@@ -406,7 +406,7 @@ const goToStep = (targetStep: number) => {
           class="mt-10"
           :height="375"
           :width="270"
-          :src="`http://localhost:3000/movies/${movie?.movieId}/image`"
+          :src="`${movie?.movieImage}`"
           style="
             position: absolute;
             z-index: 1;
@@ -793,10 +793,7 @@ const goToStep = (targetStep: number) => {
                               border-radius: 1rem;
                             "
                           >
-                            <v-img
-                              style="height: 100%; width: 30vw"
-                              :src="`http://localhost:3000/foods/${food.foodId}/image`"
-                            >
+                            <v-img style="height: 100%; width: 30vw" :src="`${food.foodImage}`">
                             </v-img>
                           </v-card>
                           <p

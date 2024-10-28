@@ -60,7 +60,7 @@ onMounted(async () => {
             style="border-radius: 1rem"
             :width="260"
             :height="385"
-            :src="`http://localhost:3000/movies/${movieId}/image`"
+            :src="`${movie?.movieImage}`"
           ></v-img>
         </v-card>
       </v-col>
